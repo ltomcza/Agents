@@ -60,6 +60,7 @@ on Python agents handles this).
 |---|---|---|
 | [`python-orchestrator`](Python/agents/python-orchestrator.md) | Coordinates the team for non-trivial Python work | opus |
 | [`python-architect`](Python/agents/python-architect.md) | Designs systems, module layout, API contracts (read-only) | opus |
+| [`python-researcher`](Python/agents/python-researcher.md) | Investigates codebase and libraries before changes (read-only) | sonnet |
 | [`python-developer`](Python/agents/python-developer.md) | Implements features against a contract | sonnet |
 | [`python-test-engineer`](Python/agents/python-test-engineer.md) | pytest unit/integration/property tests | sonnet |
 | [`python-code-reviewer`](Python/agents/python-code-reviewer.md) | Reviews diffs for correctness, design, idiom | sonnet |
@@ -93,6 +94,7 @@ on Python agents handles this).
 |---|---|---|
 | [`dotnet-orchestrator`](DotNet/agents/dotnet-orchestrator.md) | Coordinates the team for non-trivial .NET work | opus |
 | [`dotnet-architect`](DotNet/agents/dotnet-architect.md) | Designs systems, project layout, API contracts (read-only) | opus |
+| [`dotnet-researcher`](DotNet/agents/dotnet-researcher.md) | Investigates codebase and libraries before changes (read-only) | sonnet |
 | [`dotnet-developer`](DotNet/agents/dotnet-developer.md) | Implements features against a contract | sonnet |
 | [`dotnet-test-engineer`](DotNet/agents/dotnet-test-engineer.md) | xUnit/NUnit unit/integration/property tests | sonnet |
 | [`dotnet-code-reviewer`](DotNet/agents/dotnet-code-reviewer.md) | Reviews diffs for correctness, design, idiom | sonnet |

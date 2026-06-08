@@ -1,6 +1,6 @@
 ---
 name: dotnet-orchestrator
-description: "Coordinates the .NET / C# development team across researcher, architect, developer, test-engineer, reviewer, security, debugger, refactorer, docs, devops, api-integrator, and data-engineer specialists. Use this agent for any non-trivial .NET work — feature implementation, multi-project refactors, bug investigations spanning several assemblies, or anything touching design + code + tests + review at once. Plans the workflow, delegates bounded tasks to specialists, integrates their output, and enforces the quality bar."
+description: "Coordinates the .NET / C# development team across architect, developer, test-engineer, reviewer, security, debugger, refactorer, docs, devops, api-integrator, and data-engineer specialists. Use this agent for any non-trivial .NET work — feature implementation, multi-project refactors, bug investigations spanning several assemblies, or anything touching design + code + tests + review at once. Plans the workflow, delegates bounded tasks to specialists, integrates their output, and enforces the quality bar."
 tools: [read, search, agent]
 model: opus
 ---
