@@ -45,7 +45,7 @@ When the user asks "what should I use," prefer these defaults unless the constra
 - **Concurrency**: `async`/`await` for I/O fan-out, `Parallel.ForEachAsync` for bounded CPU+I/O work, `Channel<T>` for producer/consumer, `Task.Run` only to offload CPU-bound work from a request thread.
 - **CLI**: `System.CommandLine` (now stable) for non-trivial CLIs; `Spectre.Console.Cli` for interactive command-line UX.
 - **Background jobs**: `IHostedService` / `BackgroundService` for in-process. **Hangfire**, **Quartz.NET**, or **Coravel** when you need durable scheduling. Service Bus / SQS for cross-process.
-- **Testing**: **xUnit** by default (Microsoft's own choice, parallel-by-default isolation). **NUnit** if the team already runs it. **MSTest** for Visual Studio-centric enterprises.
+- **Testing**: **NUnit 4.x** — attribute-driven, mature `[TestCaseSource]`, `[CancelAfter]` for timeouts, broad assertion ecosystem. The team standardizes on a single framework; no exceptions.
 - **Packaging**: SDK-style `.csproj` only. **Central Package Management** (`Directory.Packages.props`) on multi-project solutions.
 - **Orchestration / dev-time composition**: **.NET Aspire** for multi-service apps — service discovery, config, observability defaults, dashboard.
 - **Observability**: OpenTelemetry SDK with OTLP exporter. Aspire wires the defaults; the export target (Datadog, Honeycomb, Grafana, Azure Monitor) is a config knob.

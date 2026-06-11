@@ -83,6 +83,11 @@ When showing C# in code blocks, follow the standards in
   assume .NET 8+ / C# 12+ unless the example targets an older version.
 - XML doc comments on public API. `ILogger<T>` for logging.
 
+Current LTS as of writing is **.NET 10 (released November 2025)**; the
+`DotNet/skills/packaging/SKILL.md` examples and the `devops-engineer` agent
+target `net10.0` by default. Use `net8.0` only when the example specifically
+needs to target the older LTS.
+
 ## Tone
 
 - Direct and concrete. The reader is a busy engineer, not a tutorial student.

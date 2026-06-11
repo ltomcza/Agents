@@ -151,6 +151,75 @@ foreach (var entry in zip.Entries)
 - **Rate limiting:** `app.UseRateLimiter()` on auth endpoints to prevent brute force.
 - **Cookie settings:** `CookieAuthenticationOptions.Cookie.SecurePolicy = CookieSecurePolicy.Always`, `HttpOnly = true`, `SameSite = SameSiteMode.Strict` (or `Lax`).
 
+### IDOR (object-level authorization)
+
+**Bad:**
+```csharp
+app.MapGet("/orders/{id:guid}", async (Guid id, AppDbContext db) =>
+{
+    var order = await db.Orders.FindAsync(id);
+    return order is null ? Results.NotFound() : Results.Ok(order);
+});
+```
+
+Any authenticated user can read any order by guessing or enumerating IDs.
+
+**Good:**
+```csharp
+app.MapGet("/orders/{id:guid}", async (
+    Guid id,
+    AppDbContext db,
+    ClaimsPrincipal user,
+    CancellationToken ct) =>
+{
+    var userId = user.GetUserId();  // your claim accessor
+    var order = await db.Orders
+        .Where(o => o.Id == id && o.OwnerId == userId)
+        .FirstOrDefaultAsync(ct);
+    return order is null ? Results.NotFound() : Results.Ok(order);
+}).RequireAuthorization();
+```
+
+Filter by ownership in the query, not after materializing. Return `NotFound` rather than `Forbid` to avoid leaking existence.
+
+### Anti-forgery (state-changing endpoints)
+
+**Bad:**
+```csharp
+app.MapPost("/account/email", async (UpdateEmailRequest req, IUserService svc) =>
+{
+    await svc.UpdateEmailAsync(req);
+    return Results.NoContent();
+});
+```
+
+A cookie-authenticated browser can be tricked into POSTing to this endpoint from another origin (CSRF).
+
+**Good:**
+```csharp
+// Program.cs
+builder.Services.AddAntiforgery();
+app.UseAntiforgery();
+
+// Minimal API — DisableAntiforgery() opts out; default is on for cookie auth
+app.MapPost("/account/email", async (
+    UpdateEmailRequest req,
+    IAntiforgery antiforgery,
+    HttpContext http,
+    IUserService svc) =>
+{
+    await antiforgery.ValidateRequestAsync(http);
+    await svc.UpdateEmailAsync(req);
+    return Results.NoContent();
+});
+
+// MVC controllers
+[HttpPost, ValidateAntiForgeryToken]
+public async Task<IActionResult> UpdateEmail(UpdateEmailRequest req) { ... }
+```
+
+Anti-forgery is not needed for endpoints authenticated by `Authorization: Bearer …` (no ambient credentials), but is needed wherever cookies, basic auth, or client certificates are accepted.
+
 ## ASP.NET Core specifics
 
 - **Middleware ordering matters.** `UseAuthentication()` -> `UseAuthorization()` -> endpoint mapping. Wrong order = unauthenticated requests reaching endpoints.

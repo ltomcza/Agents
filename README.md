@@ -33,7 +33,7 @@ script auto-discovers it.
 │   │   ├── orchestrator.md
 │   │   └── ...
 │   └── skills/              # .NET / C# skills
-│       ├── xunit-testing/
+│       ├── nunit-testing/
 │       │   └── SKILL.md
 │       ├── async-concurrency/
 │       │   └── SKILL.md
@@ -96,7 +96,7 @@ do not require a language prefix.
 | [`architect`](DotNet/agents/architect.md) | Designs systems, project layout, API contracts (read-only) | opus |
 | [`researcher`](DotNet/agents/researcher.md) | Investigates codebase and libraries before changes (read-only) | sonnet |
 | [`developer`](DotNet/agents/developer.md) | Implements features against a contract | sonnet |
-| [`test-engineer`](DotNet/agents/test-engineer.md) | xUnit/NUnit unit/integration/property tests | sonnet |
+| [`test-engineer`](DotNet/agents/test-engineer.md) | NUnit unit/integration/property tests | sonnet |
 | [`code-reviewer`](DotNet/agents/code-reviewer.md) | Reviews diffs for correctness, design, idiom | sonnet |
 | [`security-auditor`](DotNet/agents/security-auditor.md) | OWASP-mapped security findings (read-only) | sonnet |
 | [`debugger`](DotNet/agents/debugger.md) | Root-cause failures (read-only) | sonnet |
@@ -111,7 +111,7 @@ do not require a language prefix.
 
 | Skill | Topic |
 |---|---|
-| [`xunit-testing`](DotNet/skills/xunit-testing/SKILL.md) | xUnit fixtures, theory data, mocking, async, coverage |
+| [`nunit-testing`](DotNet/skills/nunit-testing/SKILL.md) | NUnit fixtures, test-case data, mocking, async, coverage |
 | [`style`](DotNet/skills/style/SKILL.md) | C# coding standards, modern language features |
 | [`code-review`](DotNet/skills/code-review/SKILL.md) | Review checklist with severity guide |
 | [`debugging`](DotNet/skills/debugging/SKILL.md) | Repro, stack trace reading, common failure modes |
@@ -121,6 +121,8 @@ do not require a language prefix.
 | [`security`](DotNet/skills/security/SKILL.md) | OWASP top 10 mapped to .NET idioms |
 | [`solid-principles`](DotNet/skills/solid-principles/SKILL.md) | SOLID applied to C# / .NET, with judgment |
 | [`async-concurrency`](DotNet/skills/async-concurrency/SKILL.md) | async/await, Task, Channel, cancellation, common pitfalls |
+| [`dependency-injection`](DotNet/skills/dependency-injection/SKILL.md) | Lifetimes, captive deps, keyed services, IOptions, composition root |
+| [`ef-core`](DotNet/skills/ef-core/SKILL.md) | DbContext lifetime, Fluent mapping, query patterns, migrations, interceptors |
 
 ## Using these files in your editor
 

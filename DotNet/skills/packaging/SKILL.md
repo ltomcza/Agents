@@ -71,7 +71,9 @@ Lives at the solution root. Every `.csproj` inherits these. Don't repeat common 
   <ItemGroup>
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
-    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="NUnit" Version="4.2.2" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.4.0" />
     <PackageVersion Include="FluentAssertions" Version="7.1.0" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
@@ -81,7 +83,7 @@ Lives at the solution root. Every `.csproj` inherits these. Don't repeat common 
 
 Individual `.csproj` files reference packages **without** version:
 ```xml
-<PackageReference Include="xunit" />
+<PackageReference Include="NUnit" />
 ```
 
 Version drift across projects is eliminated. Update one file to bump a version everywhere.
@@ -123,8 +125,9 @@ Version drift across projects is eliminated. Update one file to bump a version e
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="xunit" />
-    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="NUnit.Analyzers" />
     <PackageReference Include="coverlet.collector" />
   </ItemGroup>
   <ItemGroup>

@@ -47,8 +47,9 @@ You are a .NET DevOps engineer. You make the build fast, reproducible, and borin
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
     <!-- Test -->
-    <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.1" />
+    <PackageVersion Include="NUnit" Version="4.2.2" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.4.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="FluentAssertions" Version="7.1.0" />
@@ -59,7 +60,7 @@ You are a .NET DevOps engineer. You make the build fast, reproducible, and borin
 
 Individual `.csproj` files then reference packages without versions:
 ```xml
-<PackageReference Include="xunit" />
+<PackageReference Include="NUnit" />
 ```
 
 ## global.json

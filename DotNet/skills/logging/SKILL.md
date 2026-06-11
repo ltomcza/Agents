@@ -125,6 +125,20 @@ Use Serilog *or* the built-in `ILogger` pipeline — both work through `ILogger<
 
 ## 7. OpenTelemetry logging
 
+### Serilog vs OpenTelemetry — when each fits
+
+| | Reach for **Serilog** | Reach for **OpenTelemetry** |
+|---|---|---|
+| Primary sink | File, Seq, Elasticsearch, Splunk, Datadog (via sink) | OTLP collector → Tempo / Jaeger / Honeycomb / Datadog APM |
+| Pillars | Logs (mainly) | Logs **+ traces + metrics** unified under one resource |
+| Config model | Code-first or `appsettings.json` via `ReadFrom.Configuration` | Builder API on `IServiceCollection` / `ILoggingBuilder` |
+| Strength | Rich enrichers, destructuring, mature sink ecosystem | Standard wire format, vendor-neutral, correlates with traces |
+| Bias | Self-hosted / on-prem observability | Cloud-native / multi-signal observability |
+
+**They compose.** A common production setup: Serilog as the logging pipeline (for its destructuring + Seq sink) **plus** OpenTelemetry for traces and metrics export. Or: drop Serilog and use OTel for all three pillars when your collector targets only OTLP.
+
+### Minimal OTel logging setup
+
 ```csharp
 builder.Logging.AddOpenTelemetry(options =>
 {

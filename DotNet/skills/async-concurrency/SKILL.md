@@ -121,7 +121,7 @@ var channel = Channel.CreateBounded<WorkItem>(new BoundedChannelOptions(100)
 // Producer
 await channel.Writer.WriteAsync(item, ct);
 
-// Consumer (in a BackgroundService)
+// Consumer
 await foreach (var item in channel.Reader.ReadAllAsync(ct))
 {
     await ProcessAsync(item, ct);
@@ -131,6 +131,69 @@ await foreach (var item in channel.Reader.ReadAllAsync(ct))
 - `Channel<T>` is the async-native producer/consumer queue. Thread-safe, allocation-efficient.
 - Bounded channels provide backpressure. Unbounded channels risk memory exhaustion.
 - Prefer over `ConcurrentQueue<T>` + polling.
+
+### Channel<T> + BackgroundService — production pattern
+
+The standard pattern for "fire-and-forget that must complete": the producer writes to a bounded channel, a `BackgroundService` drains it, and shutdown is graceful.
+
+```csharp
+public sealed class WorkQueue
+{
+    private readonly Channel<WorkItem> _channel = Channel.CreateBounded<WorkItem>(
+        new BoundedChannelOptions(capacity: 100)
+        {
+            FullMode = BoundedChannelFullMode.Wait,
+            SingleReader = true,
+            SingleWriter = false,
+        });
+
+    public ChannelReader<WorkItem> Reader => _channel.Reader;
+
+    public ValueTask EnqueueAsync(WorkItem item, CancellationToken ct)
+        => _channel.Writer.WriteAsync(item, ct);
+
+    public void Complete() => _channel.Writer.TryComplete();
+}
+
+public sealed class WorkQueueProcessor(
+    WorkQueue queue,
+    IServiceScopeFactory scopeFactory,
+    ILogger<WorkQueueProcessor> log) : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        await foreach (var item in queue.Reader.ReadAllAsync(stoppingToken))
+        {
+            try
+            {
+                // New DI scope per item — each handler gets its own DbContext etc.
+                using var scope = scopeFactory.CreateScope();
+                var handler = scope.ServiceProvider.GetRequiredService<IWorkHandler>();
+                await handler.HandleAsync(item, stoppingToken);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                throw;  // shutdown — let it bubble
+            }
+            catch (Exception ex)
+            {
+                // Don't kill the host on one bad item. Log + continue.
+                log.LogError(ex, "work.failed {WorkItemId}", item.Id);
+            }
+        }
+    }
+}
+
+// Registration
+services.AddSingleton<WorkQueue>();
+services.AddHostedService<WorkQueueProcessor>();
+services.AddScoped<IWorkHandler, MyWorkHandler>();
+```
+
+- **`stoppingToken`** is signaled on `IHostApplicationLifetime.StopAsync`. `ReadAllAsync(stoppingToken)` exits cleanly when shutdown begins, after the current item finishes.
+- **Catch and log per item** — an unhandled exception inside `ExecuteAsync` stops the hosted service for good (and on .NET 6+ can crash the host depending on `BackgroundServiceExceptionBehavior`).
+- **One DI scope per item** — `BackgroundService` is a Singleton; never inject `Scoped` services directly. Resolve them via `IServiceScopeFactory`.
+- **Graceful shutdown**: if work in flight must complete, call `queue.Complete()` from the producer side (or an `IHostApplicationLifetime.ApplicationStopping` callback) so the reader drains the remainder before the channel closes.
 
 ### Parallel.ForEachAsync — bounded parallelism
 

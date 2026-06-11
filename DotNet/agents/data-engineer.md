@@ -96,6 +96,39 @@ await context.Orders
   await tx.CommitAsync(ct);
   ```
 
+### Interceptors
+
+`SaveChangesInterceptor` and `IDbCommandInterceptor` are the right tool for cross-cutting concerns that touch every save or query. Reach for them instead of base-class hooks or AOP magic.
+
+```csharp
+public sealed class TimestampInterceptor : SaveChangesInterceptor
+{
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+        DbContextEventData eventData,
+        InterceptionResult<int> result,
+        CancellationToken ct = default)
+    {
+        var now = DateTimeOffset.UtcNow;
+        foreach (var entry in eventData.Context!.ChangeTracker.Entries<ITimestamped>())
+        {
+            if (entry.State == EntityState.Added)   entry.Entity.CreatedAt = now;
+            if (entry.State == EntityState.Modified) entry.Entity.UpdatedAt = now;
+        }
+        return base.SavingChangesAsync(eventData, result, ct);
+    }
+}
+
+// Register with the DbContext
+services.AddDbContext<AppDbContext>((sp, options) =>
+    options.UseNpgsql(connStr)
+           .AddInterceptors(sp.GetRequiredService<TimestampInterceptor>()));
+```
+
+- **`SaveChangesInterceptor`** — audit logging, auto-timestamps (`CreatedAt` / `UpdatedAt`), soft-delete promotion (`State = Deleted` → set `DeletedAt`, switch to `Modified`).
+- **`IDbCommandInterceptor`** — query logging with parameter scrubbing, tenant filter injection, slow-query metrics.
+- **Prefer the async overrides** (`SavingChangesAsync`, `ReaderExecutingAsync`) — they don't block when interceptor work touches I/O.
+- Resolve interceptor dependencies via DI in the `AddDbContext` factory, not via static state.
+
 ## Dapper — when EF Core is too much
 
 ```csharp
