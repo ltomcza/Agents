@@ -16,26 +16,26 @@ script auto-discovers it.
 .
 ├── Python/
 │   ├── agents/              # canonical agent profiles (one file per agent)
-│   │   ├── python-architect.md
-│   │   ├── python-developer.md
-│   │   ├── python-orchestrator.md
+│   │   ├── architect.md
+│   │   ├── developer.md
+│   │   ├── orchestrator.md
 │   │   └── ...
 │   └── skills/              # canonical skills (one folder per skill)
-│       ├── pytest-testing/
+│       ├── testing/
 │       │   └── SKILL.md
-│       ├── python-async-concurrency/
+│       ├── async-concurrency/
 │       │   └── SKILL.md
 │       └── ...
 ├── DotNet/
 │   ├── agents/              # .NET / C# agent profiles
-│   │   ├── dotnet-architect.md
-│   │   ├── dotnet-developer.md
-│   │   ├── dotnet-orchestrator.md
+│   │   ├── architect.md
+│   │   ├── developer.md
+│   │   ├── orchestrator.md
 │   │   └── ...
 │   └── skills/              # .NET / C# skills
 │       ├── xunit-testing/
 │       │   └── SKILL.md
-│       ├── dotnet-async-concurrency/
+│       ├── async-concurrency/
 │       │   └── SKILL.md
 │       └── ...
 ├── scripts/
@@ -49,8 +49,8 @@ The files under `<Language>/agents/` and `<Language>/skills/` are the **single
 source of truth**. The `.github/` and `.claude/` directories are derived by the
 sync script — treat them as build artifacts and do not edit them directly. Both
 hosts expect a flat list, so the script aggregates every language directory into
-the same destination; keep agent filenames globally unique (the `python-` prefix
-on Python agents handles this).
+the same destination; agent filenames are scoped by their language directory and
+do not require a language prefix.
 
 ## Roster
 
@@ -58,69 +58,69 @@ on Python agents handles this).
 
 | Agent | Role | Model |
 |---|---|---|
-| [`python-orchestrator`](Python/agents/python-orchestrator.md) | Coordinates the team for non-trivial Python work | opus |
-| [`python-architect`](Python/agents/python-architect.md) | Designs systems, module layout, API contracts (read-only) | opus |
-| [`python-researcher`](Python/agents/python-researcher.md) | Investigates codebase and libraries before changes (read-only) | sonnet |
-| [`python-developer`](Python/agents/python-developer.md) | Implements features against a contract | sonnet |
-| [`python-test-engineer`](Python/agents/python-test-engineer.md) | pytest unit/integration/property tests | sonnet |
-| [`python-code-reviewer`](Python/agents/python-code-reviewer.md) | Reviews diffs for correctness, design, idiom | sonnet |
-| [`python-security-auditor`](Python/agents/python-security-auditor.md) | OWASP-mapped security findings (read-only) | sonnet |
-| [`python-debugger`](Python/agents/python-debugger.md) | Root-cause failures (read-only) | sonnet |
-| [`python-performance-engineer`](Python/agents/python-performance-engineer.md) | Profile and rank optimizations (read-only) | sonnet |
-| [`python-refactorer`](Python/agents/python-refactorer.md) | Behavior-preserving restructuring | sonnet |
-| [`python-docs-writer`](Python/agents/python-docs-writer.md) | Docstrings, READMEs, ADRs | sonnet |
-| [`python-devops-engineer`](Python/agents/python-devops-engineer.md) | pyproject, CI, packaging, lockfiles | sonnet |
-| [`python-api-integrator`](Python/agents/python-api-integrator.md) | Typed HTTP clients, auth, retries, webhooks | sonnet |
-| [`python-data-engineer`](Python/agents/python-data-engineer.md) | pandas/polars, SQL, ETL, schema migrations | sonnet |
+| [`orchestrator`](Python/agents/orchestrator.md) | Coordinates the team for non-trivial Python work | opus |
+| [`architect`](Python/agents/architect.md) | Designs systems, module layout, API contracts (read-only) | opus |
+| [`researcher`](Python/agents/researcher.md) | Investigates codebase and libraries before changes (read-only) | sonnet |
+| [`developer`](Python/agents/developer.md) | Implements features against a contract | sonnet |
+| [`test-engineer`](Python/agents/test-engineer.md) | pytest unit/integration/property tests | sonnet |
+| [`code-reviewer`](Python/agents/code-reviewer.md) | Reviews diffs for correctness, design, idiom | sonnet |
+| [`security-auditor`](Python/agents/security-auditor.md) | OWASP-mapped security findings (read-only) | sonnet |
+| [`debugger`](Python/agents/debugger.md) | Root-cause failures (read-only) | sonnet |
+| [`performance-engineer`](Python/agents/performance-engineer.md) | Profile and rank optimizations (read-only) | sonnet |
+| [`refactorer`](Python/agents/refactorer.md) | Behavior-preserving restructuring | sonnet |
+| [`docs-writer`](Python/agents/docs-writer.md) | Docstrings, READMEs, ADRs | sonnet |
+| [`devops-engineer`](Python/agents/devops-engineer.md) | pyproject, CI, packaging, lockfiles | sonnet |
+| [`api-integrator`](Python/agents/api-integrator.md) | Typed HTTP clients, auth, retries, webhooks | sonnet |
+| [`data-engineer`](Python/agents/data-engineer.md) | pandas/polars, SQL, ETL, schema migrations | sonnet |
 
 ### Skills
 
 | Skill | Topic |
 |---|---|
-| [`pytest-testing`](Python/skills/pytest-testing/SKILL.md) | pytest fixtures, parametrization, mocking, async, coverage |
-| [`python-style`](Python/skills/python-style/SKILL.md) | PEP 8 + modern idioms (3.10+) |
-| [`python-code-review`](Python/skills/python-code-review/SKILL.md) | Review checklist with severity guide |
-| [`python-debugging`](Python/skills/python-debugging/SKILL.md) | Repro, traceback reading, common failure modes |
-| [`python-logging`](Python/skills/python-logging/SKILL.md) | Structured logging, contextvars, dictConfig |
-| [`python-packaging`](Python/skills/python-packaging/SKILL.md) | pyproject.toml, uv, lockfiles, Docker, CI |
-| [`python-refactoring`](Python/skills/python-refactoring/SKILL.md) | Behavior-preserving refactoring patterns |
-| [`python-security`](Python/skills/python-security/SKILL.md) | OWASP top 10 mapped to Python idioms |
+| [`testing`](Python/skills/testing/SKILL.md) | pytest fixtures, parametrization, mocking, async, coverage |
+| [`style`](Python/skills/style/SKILL.md) | PEP 8 + modern idioms (3.10+) |
+| [`code-review`](Python/skills/code-review/SKILL.md) | Review checklist with severity guide |
+| [`debugging`](Python/skills/debugging/SKILL.md) | Repro, traceback reading, common failure modes |
+| [`logging`](Python/skills/logging/SKILL.md) | Structured logging, contextvars, dictConfig |
+| [`packaging`](Python/skills/packaging/SKILL.md) | pyproject.toml, uv, lockfiles, Docker, CI |
+| [`refactoring`](Python/skills/refactoring/SKILL.md) | Behavior-preserving refactoring patterns |
+| [`security`](Python/skills/security/SKILL.md) | OWASP top 10 mapped to Python idioms |
 | [`solid-principles`](Python/skills/solid-principles/SKILL.md) | SOLID applied to Python, with judgment |
-| [`python-async-concurrency`](Python/skills/python-async-concurrency/SKILL.md) | asyncio, TaskGroup, cancellation, sync↔async bridging |
+| [`async-concurrency`](Python/skills/async-concurrency/SKILL.md) | asyncio, TaskGroup, cancellation, sync↔async bridging |
 
 ### .NET / C# Agents
 
 | Agent | Role | Model |
 |---|---|---|
-| [`dotnet-orchestrator`](DotNet/agents/dotnet-orchestrator.md) | Coordinates the team for non-trivial .NET work | opus |
-| [`dotnet-architect`](DotNet/agents/dotnet-architect.md) | Designs systems, project layout, API contracts (read-only) | opus |
-| [`dotnet-researcher`](DotNet/agents/dotnet-researcher.md) | Investigates codebase and libraries before changes (read-only) | sonnet |
-| [`dotnet-developer`](DotNet/agents/dotnet-developer.md) | Implements features against a contract | sonnet |
-| [`dotnet-test-engineer`](DotNet/agents/dotnet-test-engineer.md) | xUnit/NUnit unit/integration/property tests | sonnet |
-| [`dotnet-code-reviewer`](DotNet/agents/dotnet-code-reviewer.md) | Reviews diffs for correctness, design, idiom | sonnet |
-| [`dotnet-security-auditor`](DotNet/agents/dotnet-security-auditor.md) | OWASP-mapped security findings (read-only) | sonnet |
-| [`dotnet-debugger`](DotNet/agents/dotnet-debugger.md) | Root-cause failures (read-only) | sonnet |
-| [`dotnet-performance-engineer`](DotNet/agents/dotnet-performance-engineer.md) | Profile and rank optimizations (read-only) | sonnet |
-| [`dotnet-refactorer`](DotNet/agents/dotnet-refactorer.md) | Behavior-preserving restructuring | sonnet |
-| [`dotnet-docs-writer`](DotNet/agents/dotnet-docs-writer.md) | XML doc comments, READMEs, ADRs | sonnet |
-| [`dotnet-devops-engineer`](DotNet/agents/dotnet-devops-engineer.md) | .csproj, CI, NuGet, Docker, EditorConfig | sonnet |
-| [`dotnet-api-integrator`](DotNet/agents/dotnet-api-integrator.md) | Typed HttpClient, auth, Polly retries, webhooks | sonnet |
-| [`dotnet-data-engineer`](DotNet/agents/dotnet-data-engineer.md) | EF Core, Dapper, SQL, schema migrations | sonnet |
+| [`orchestrator`](DotNet/agents/orchestrator.md) | Coordinates the team for non-trivial .NET work | opus |
+| [`architect`](DotNet/agents/architect.md) | Designs systems, project layout, API contracts (read-only) | opus |
+| [`researcher`](DotNet/agents/researcher.md) | Investigates codebase and libraries before changes (read-only) | sonnet |
+| [`developer`](DotNet/agents/developer.md) | Implements features against a contract | sonnet |
+| [`test-engineer`](DotNet/agents/test-engineer.md) | xUnit/NUnit unit/integration/property tests | sonnet |
+| [`code-reviewer`](DotNet/agents/code-reviewer.md) | Reviews diffs for correctness, design, idiom | sonnet |
+| [`security-auditor`](DotNet/agents/security-auditor.md) | OWASP-mapped security findings (read-only) | sonnet |
+| [`debugger`](DotNet/agents/debugger.md) | Root-cause failures (read-only) | sonnet |
+| [`performance-engineer`](DotNet/agents/performance-engineer.md) | Profile and rank optimizations (read-only) | sonnet |
+| [`refactorer`](DotNet/agents/refactorer.md) | Behavior-preserving restructuring | sonnet |
+| [`docs-writer`](DotNet/agents/docs-writer.md) | XML doc comments, READMEs, ADRs | sonnet |
+| [`devops-engineer`](DotNet/agents/devops-engineer.md) | .csproj, CI, NuGet, Docker, EditorConfig | sonnet |
+| [`api-integrator`](DotNet/agents/api-integrator.md) | Typed HttpClient, auth, Polly retries, webhooks | sonnet |
+| [`data-engineer`](DotNet/agents/data-engineer.md) | EF Core, Dapper, SQL, schema migrations | sonnet |
 
 ### .NET / C# Skills
 
 | Skill | Topic |
 |---|---|
 | [`xunit-testing`](DotNet/skills/xunit-testing/SKILL.md) | xUnit fixtures, theory data, mocking, async, coverage |
-| [`dotnet-style`](DotNet/skills/dotnet-style/SKILL.md) | C# coding standards, modern language features |
-| [`dotnet-code-review`](DotNet/skills/dotnet-code-review/SKILL.md) | Review checklist with severity guide |
-| [`dotnet-debugging`](DotNet/skills/dotnet-debugging/SKILL.md) | Repro, stack trace reading, common failure modes |
-| [`dotnet-logging`](DotNet/skills/dotnet-logging/SKILL.md) | Structured logging, ILogger, Serilog, OpenTelemetry |
-| [`dotnet-packaging`](DotNet/skills/dotnet-packaging/SKILL.md) | .csproj, Directory.Build.props, CPM, NuGet, Docker, CI |
-| [`dotnet-refactoring`](DotNet/skills/dotnet-refactoring/SKILL.md) | Behavior-preserving refactoring patterns |
-| [`dotnet-security`](DotNet/skills/dotnet-security/SKILL.md) | OWASP top 10 mapped to .NET idioms |
+| [`style`](DotNet/skills/style/SKILL.md) | C# coding standards, modern language features |
+| [`code-review`](DotNet/skills/code-review/SKILL.md) | Review checklist with severity guide |
+| [`debugging`](DotNet/skills/debugging/SKILL.md) | Repro, stack trace reading, common failure modes |
+| [`logging`](DotNet/skills/logging/SKILL.md) | Structured logging, ILogger, Serilog, OpenTelemetry |
+| [`packaging`](DotNet/skills/packaging/SKILL.md) | .csproj, Directory.Build.props, CPM, NuGet, Docker, CI |
+| [`refactoring`](DotNet/skills/refactoring/SKILL.md) | Behavior-preserving refactoring patterns |
+| [`security`](DotNet/skills/security/SKILL.md) | OWASP top 10 mapped to .NET idioms |
 | [`solid-principles`](DotNet/skills/solid-principles/SKILL.md) | SOLID applied to C# / .NET, with judgment |
-| [`dotnet-async-concurrency`](DotNet/skills/dotnet-async-concurrency/SKILL.md) | async/await, Task, Channel, cancellation, common pitfalls |
+| [`async-concurrency`](DotNet/skills/async-concurrency/SKILL.md) | async/await, Task, Channel, cancellation, common pitfalls |
 
 ## Using these files in your editor
 
@@ -208,9 +208,10 @@ Optional standard fields if you need them: `license`, `allowed-tools`, `metadata
 2. The body becomes the agent's system prompt — describe its role, what it does,
    what it doesn't do, and the output format.
 3. Read existing agents in the same language directory for tone and structure.
-4. Keep the filename globally unique across all language directories — both
-   hosts see a flat aggregated list. Prefixing with the language (`python-`,
-   `go-`, …) is the convention.
+4. Filenames are scoped by their language directory — no language prefix needed.
+   When the sync script flattens them into a single host directory, it uses the
+   language directory name as a prefix (e.g. `python-architect`) to avoid
+   collisions.
 5. Run `scripts/sync-to-host.*` so it's available in your editor.
 6. Cross-reference it from the language's orchestrator agent if the team should
    know about it.

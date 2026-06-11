@@ -39,7 +39,7 @@ pwsh ./scripts/sync-to-host.ps1
 ## Conventions for adding or editing agent profiles
 
 - Filename is the kebab-case agent identifier with `.md` (e.g.,
-  `python-architect.md`). The `name:` field in the frontmatter must match.
+  `architect.md`). The `name:` field in the frontmatter must match.
 - Frontmatter uses the portable superset documented in `README.md` — fields
   recognized by both Claude Code and GitHub Copilot. Do not introduce host-specific
   fields in canonical files; if needed, add them in the sync script.
@@ -66,7 +66,7 @@ pwsh ./scripts/sync-to-host.ps1
 ## Code style for examples in agent/skill bodies
 
 When showing Python in code blocks, follow the standards in
-[`Python/skills/python-style/SKILL.md`](Python/skills/python-style/SKILL.md):
+[`Python/skills/style/SKILL.md`](Python/skills/style/SKILL.md):
 
 - Type hints on all public signatures.
 - Modern syntax (`list[int]`, `X | None`) — assume Python 3.10+ unless the example
@@ -75,7 +75,7 @@ When showing Python in code blocks, follow the standards in
 - One-line summaries in docstrings, imperative mood.
 
 When showing C# in code blocks, follow the standards in
-[`DotNet/skills/dotnet-style/SKILL.md`](DotNet/skills/dotnet-style/SKILL.md):
+[`DotNet/skills/style/SKILL.md`](DotNet/skills/style/SKILL.md):
 
 - Nullable reference types enabled; annotations on all public signatures.
 - File-scoped namespaces, `sealed` by default, `record` for value-shaped data.
@@ -108,7 +108,7 @@ There is no automated test suite (yet). Manual validation:
   added.
 - One agent or one skill per commit when practical. Cross-cutting frontmatter
   changes can be bundled.
-- Commit messages name the agent/skill: `python-data-engineer: clarify pandera lazy mode`.
+- Commit messages name the agent/skill with its language directory: `Python/data-engineer: clarify pandera lazy mode`.
 
 ## PR conventions
 
