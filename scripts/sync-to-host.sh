@@ -10,10 +10,16 @@
 # Claude Code looks under .claude/agents and .claude/skills.
 #
 # Because both hosts expect a flat list of agents and a flat list of skill
-# folders, this script aggregates all per-language sources into a single flat
-# destination per host. Agent filenames are assumed to be globally unique (the
-# python- prefix handles this for the Python library); add other prefixes as
-# you add languages.
+# folders, this script aggregates the selected language sources into a single
+# flat destination per host. Agent files keep their bare names (no language
+# prefix), so sync one language at a time — pass --lang to scope the run — to
+# avoid cross-language filename collisions in the shared destination.
+#
+# Agent frontmatter uses portable lowercase tool aliases (read, edit, search,
+# execute, web, agent), which GitHub Copilot understands natively. When writing
+# the Claude Code copy, this script translates those aliases into Claude Code's
+# tool names (Read, Edit, Write, Grep, Glob, Bash, WebSearch, WebFetch, Task).
+# Skills are identical across hosts and are copied verbatim.
 #
 # Usage:
 #   ./scripts/sync-to-host.sh                   # sync all hosts, all languages
@@ -103,6 +109,49 @@ echo ""
 ensure_dir() { mkdir -p "$1"; }
 clear_dir()  { [[ -d "$1" ]] && { echo "  cleaning $1"; rm -rf "$1"; }; mkdir -p "$1"; }
 
+# Rewrites a `tools: [alias, ...]` frontmatter line (portable lowercase aliases)
+# into Claude Code's comma-separated tool-name form. Unknown aliases pass through
+# unchanged so nothing is silently dropped; files without a tools line are copied
+# through untouched. Reads stdin, writes stdout.
+translate_tools_for_claude() {
+    awk '
+        function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
+        BEGIN {
+            map["read"]    = "Read"
+            map["write"]   = "Write"
+            map["edit"]    = "Edit, Write"
+            map["search"]  = "Grep, Glob"
+            map["execute"] = "Bash"
+            map["web"]     = "WebSearch, WebFetch"
+            map["agent"]   = "Task"
+            map["todo"]    = "TodoWrite"
+        }
+        /^tools:[ \t]*\[.*\][ \t]*$/ {
+            line = $0
+            sub(/^tools:[ \t]*\[/, "", line)
+            sub(/\][ \t]*$/, "", line)
+            n = split(line, parts, ",")
+            out = ""
+            delete seen
+            for (i = 1; i <= n; i++) {
+                alias = tolower(trim(parts[i]))
+                if (alias == "") continue
+                mapped = (alias in map) ? map[alias] : trim(parts[i])
+                k = split(mapped, toks, ",")
+                for (j = 1; j <= k; j++) {
+                    t = trim(toks[j])
+                    if (t == "" || (t in seen)) continue
+                    seen[t] = 1
+                    out = (out == "") ? t : out ", " t
+                }
+            }
+            print "tools: " out
+            next
+        }
+        { print }
+    '
+}
+
 for host in "${HOSTS[@]}"; do
     echo "→ syncing host: ${host}"
 
@@ -129,7 +178,15 @@ for host in "${HOSTS[@]}"; do
 
         if [[ -d "$src_agents" ]]; then
             echo "  ${lang}/agents/  →  ${agents_dst}"
-            cp -f "${src_agents}"/*.md "${agents_dst}/" 2>/dev/null || true
+            for agent_file in "${src_agents}"/*.md; do
+                [[ -f "$agent_file" ]] || continue
+                dest="${agents_dst}/$(basename "$agent_file")"
+                if [[ "$host" == "claude" ]]; then
+                    translate_tools_for_claude < "$agent_file" > "$dest"
+                else
+                    cp -f "$agent_file" "$dest"
+                fi
+            done
         fi
 
         if [[ -d "$src_skills" ]]; then

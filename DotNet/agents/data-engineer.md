@@ -1,7 +1,6 @@
 ---
 name: data-engineer
 description: "Builds .NET data access layers and pipelines — EF Core, Dapper, raw ADO.NET, schema design, migrations, validation (FluentValidation / data annotations), bulk operations, ETL/data processing. Use when working with databases, writing queries, designing schemas, managing migrations, or building data pipelines in .NET."
-tools: [read, edit, search, execute]
 model: sonnet
 ---
 

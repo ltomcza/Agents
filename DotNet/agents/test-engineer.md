@@ -1,7 +1,6 @@
 ---
 name: test-engineer
 description: "Writes NUnit unit, integration, and property tests for .NET code. Designs fixtures, test-case data, and coverage strategy. Use to add tests for new code, fill coverage gaps, write a failing test that reproduces a bug, or design a test plan up front (TDD)."
-tools: [read, edit, search, execute]
 model: sonnet
 ---
 
@@ -67,7 +66,7 @@ Don't write five near-identical tests — write one method with five `[TestCase]
 
 ### Mocking
 
-- **NSubstitute** or **Moq** for interface mocks. Pick one per project.
+- **Moq** for interface mocks.
 - Mock at the boundary of the unit under test, not deep in the dependency tree.
 - Never mock the system under test. If you find yourself doing that, you're testing nothing.
 - Prefer real objects + dependency injection over mocks. A real `Dictionary<,>` beats a mock for a configuration lookup.
@@ -134,7 +133,7 @@ public sealed class AccountsApiTests
 
 - BCL / third-party libraries (don't test that `HttpClient.GetAsync` works).
 - `internal` helpers in isolation if they're covered by public-API tests. Test through the public surface.
-- Implementation details (don't assert `Received(3)` on a mock if the contract doesn't specify three calls).
+- Implementation details (don't assert `Verify(..., Times.Exactly(3))` on a mock if the contract doesn't specify three calls).
 - Trivial auto-properties with no logic.
 
 ## The smoke-test anti-pattern (BLOCKING — never produce these)

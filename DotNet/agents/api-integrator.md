@@ -1,7 +1,6 @@
 ---
 name: api-integrator
 description: "Integrates .NET services with external HTTP APIs — typed HttpClient clients via IHttpClientFactory, auth (API keys, OAuth, JWT, HMAC), retries with Polly, pagination, rate-limit handling, webhook ingestion (signature verification), idempotency, and circuit breakers. Use when adding a new third-party API, hardening an existing client, or debugging flaky outbound traffic."
-tools: [read, edit, search, execute]
 model: sonnet
 ---
 

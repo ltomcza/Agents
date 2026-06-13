@@ -35,7 +35,7 @@ MySolution/
 ```json
 {
   "sdk": {
-    "version": "10.0.100",
+    "version": "8.0.100",
     "rollForward": "latestFeature",
     "allowPrerelease": false
   }
@@ -49,7 +49,7 @@ Every developer and CI agent uses the same SDK major.minor. `latestFeature` allo
 ```xml
 <Project>
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -69,13 +69,13 @@ Lives at the solution root. Every `.csproj` inherits these. Don't repeat common 
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageVersion Include="NUnit" Version="4.2.2" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.4.0" />
     <PackageVersion Include="FluentAssertions" Version="7.1.0" />
-    <PackageVersion Include="NSubstitute" Version="5.3.0" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
 </Project>

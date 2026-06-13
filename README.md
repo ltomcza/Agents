@@ -1,7 +1,8 @@
 # Agents & Skills
 
 A portable library of AI **agent profiles** and **skills**, namespaced by language
-(Python today; add sibling directories for other languages as needed).
+(Python, .NET / C#, and SQL / T-SQL today; add sibling directories for other
+languages as needed).
 Host-independent: the same files work in Claude Code, GitHub Copilot, Codex CLI,
 Cursor, OpenCode, Goose, and any other tool that reads agent profiles or
 [Agent Skills](https://agentskills.io) from disk.
@@ -48,9 +49,10 @@ script auto-discovers it.
 The files under `<Language>/agents/` and `<Language>/skills/` are the **single
 source of truth**. The `.github/` and `.claude/` directories are derived by the
 sync script — treat them as build artifacts and do not edit them directly. Both
-hosts expect a flat list, so the script aggregates every language directory into
-the same destination; agent filenames are scoped by their language directory and
-do not require a language prefix.
+hosts expect a flat list, so the script copies the selected language's files into
+the destination under their bare names (no language prefix). Sync one language at a
+time (pass `-Languages` / `--lang`) so identically-named files from different
+languages don't collide in the shared host directory.
 
 ## Roster
 
@@ -124,6 +126,24 @@ do not require a language prefix.
 | [`dependency-injection`](DotNet/skills/dependency-injection/SKILL.md) | Lifetimes, captive deps, keyed services, IOptions, composition root |
 | [`ef-core`](DotNet/skills/ef-core/SKILL.md) | DbContext lifetime, Fluent mapping, query patterns, migrations, interceptors |
 
+### SQL / T-SQL Agents
+
+| Agent | Role | Model |
+|---|---|---|
+| [`tsql-orchestrator`](SQL/agents/tsql-orchestrator.md) | Coordinates the team for non-trivial T-SQL work | opus |
+| [`tsql-architect`](SQL/agents/tsql-architect.md) | Designs schemas, object boundaries, contracts (read-only) | opus |
+| [`tsql-developer`](SQL/agents/tsql-developer.md) | Implements procs, functions, views, DDL/DML against a contract | sonnet |
+| [`tsql-test-engineer`](SQL/agents/tsql-test-engineer.md) | tSQLt unit/integration tests, fake tables, spies | sonnet |
+| [`tsql-code-reviewer`](SQL/agents/tsql-code-reviewer.md) | Reviews diffs for anti-patterns, idiom, design (read-only) | sonnet |
+| [`tsql-security-auditor`](SQL/agents/tsql-security-auditor.md) | Injection, dynamic SQL, permissions, OWASP DB (read-only) | sonnet |
+| [`tsql-debugger`](SQL/agents/tsql-debugger.md) | Root-cause query errors, deadlocks, anomalies (read-only) | sonnet |
+| [`tsql-performance-tuner`](SQL/agents/tsql-performance-tuner.md) | Execution plans, waits, Query Store; ranked tuning (read-only) | sonnet |
+| [`tsql-refactorer`](SQL/agents/tsql-refactorer.md) | Cursor→set-based, behavior-preserving restructuring | sonnet |
+| [`tsql-docs-writer`](SQL/agents/tsql-docs-writer.md) | Object headers, extended properties, data dictionaries | sonnet |
+| [`tsql-migration-engineer`](SQL/agents/tsql-migration-engineer.md) | Version-controlled DDL, safe deploys, rollback strategy | sonnet |
+| [`tsql-index-advisor`](SQL/agents/tsql-index-advisor.md) | Index recommendations from query and plan analysis | sonnet |
+| [`tsql-etl-engineer`](SQL/agents/tsql-etl-engineer.md) | ETL/ELT proc chains, SSIS, staging, incremental loads | sonnet |
+
 ## Using these files in your editor
 
 The agents and skills are plain Markdown files with YAML frontmatter. Most agent
@@ -177,7 +197,7 @@ Every agent under `<Language>/agents/` uses this portable superset:
 ---
 name: <kebab-case identifier>
 description: "<when to use this agent — trigger conditions, not just a summary>"
-tools: [read, edit, search, execute, web, agent]
+tools: [read, search, web]   # optional — omit to inherit the host's full toolset
 model: opus | sonnet | haiku
 ---
 ```
@@ -186,12 +206,16 @@ model: opus | sonnet | haiku
 - **`description`** — used by the orchestrator/host to decide when to invoke this
   agent. Write trigger conditions, not a marketing blurb. Be specific about what's
   in scope and what's out.
-- **`tools`** — lowercase aliases shared by Copilot and (case-insensitively) by
-  Claude Code. Valid values: `read`, `edit`, `write`, `search`, `execute`/`bash`,
-  `web`, `agent`. Omit if the agent should inherit the host's full toolset.
-- **`model`** — alias (`opus` / `sonnet` / `haiku`). Hosts that don't support
-  per-agent model selection ignore the field. Avoid pinning exact model IDs unless
-  you have a reason — aliases survive model upgrades.
+- **`tools`** — optional. Lowercase aliases that GitHub Copilot understands
+  natively: `read`, `edit`, `write`, `search`, `execute`, `web`, `agent`, `todo`.
+  Claude Code does **not** recognize these aliases, so the sync script translates
+  them to Claude's tool names when it writes `.claude/agents/` (e.g.
+  `[read, search, web]` → `Read, Grep, Glob, WebSearch, WebFetch`). Declare `tools`
+  only on agents that need a restricted set (read-only reviewers, auditors, the
+  orchestrator); omit it on read/write agents so both hosts grant the full toolset.
+- **`model`** — alias (`opus` / `sonnet` / `haiku`). Claude Code honors these;
+  Copilot falls back to its model picker if the alias isn't one of its IDs. Avoid
+  pinning exact model IDs unless you have a reason — aliases survive model upgrades.
 
 Every skill in `<Language>/skills/<name>/SKILL.md` uses the AgentSkills.io standard:
 
@@ -210,10 +234,10 @@ Optional standard fields if you need them: `license`, `allowed-tools`, `metadata
 2. The body becomes the agent's system prompt — describe its role, what it does,
    what it doesn't do, and the output format.
 3. Read existing agents in the same language directory for tone and structure.
-4. Filenames are scoped by their language directory — no language prefix needed.
-   When the sync script flattens them into a single host directory, it uses the
-   language directory name as a prefix (e.g. `python-architect`) to avoid
-   collisions.
+4. Filenames use bare kebab-case names — no language prefix. The sync script copies
+   them into the host directory unchanged, so sync one language at a time
+   (`-Languages` / `--lang`) to avoid collisions with same-named agents in another
+   language.
 5. Run `scripts/sync-to-host.*` so it's available in your editor.
 6. Cross-reference it from the language's orchestrator agent if the team should
    know about it.

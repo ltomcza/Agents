@@ -3,7 +3,7 @@ name: nunit-testing
 description: NUnit testing patterns for .NET — test structure, fixtures, test-case data, mocking, async testing, integration testing with WebApplicationFactory and Testcontainers, coverage strategy. Apply when writing tests or designing a test plan.
 ---
 
-Use **NUnit 4.x** as the testing framework. Standard packages: `NUnit`, `NUnit3TestAdapter`, `NUnit.Analyzers`, `Microsoft.NET.Test.Sdk`, `coverlet.collector`, `FluentAssertions`, `NSubstitute` (or `Moq`), `FsCheck.NUnit`.
+Use **NUnit 4.x** as the testing framework. Standard packages: `NUnit`, `NUnit3TestAdapter`, `NUnit.Analyzers`, `Microsoft.NET.Test.Sdk`, `coverlet.collector`, `FluentAssertions`, `Moq`, `FsCheck.NUnit`.
 
 ## Assertion library
 
@@ -122,19 +122,21 @@ Don't write five near-identical tests — write one method with five `[TestCase]
 
 `SetName(...)` on `TestCaseData` gives each row a readable name in the runner output.
 
-## Mocking — NSubstitute or Moq
+## Mocking — Moq
 
 ```csharp
 [Test]
 public async Task Transfer_LogsCompletion()
 {
-    var ledger = Substitute.For<ILedger>();
-    var logger = Substitute.For<ILogger<TransferService>>();
-    var sut = new TransferService(ledger, logger);
+    var ledger = new Mock<ILedger>();
+    var logger = new Mock<ILogger<TransferService>>();
+    var sut = new TransferService(ledger.Object, logger.Object);
 
     await sut.TransferAsync(new TransferRequest(src, dst, 10m), CancellationToken.None);
 
-    await ledger.Received(1).TransferAsync(Arg.Any<TransferRequest>(), Arg.Any<CancellationToken>());
+    ledger.Verify(
+        l => l.TransferAsync(It.IsAny<TransferRequest>(), It.IsAny<CancellationToken>()),
+        Times.Once);
 }
 ```
 
@@ -376,7 +378,7 @@ public void Enemy_Fires_BulletAtAimAngle()
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
@@ -386,7 +388,7 @@ public void Enemy_Fires_BulletAtAimAngle()
     <PackageReference Include="NUnit3TestAdapter" />
     <PackageReference Include="NUnit.Analyzers" />
     <PackageReference Include="FluentAssertions" />
-    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Moq" />
     <PackageReference Include="coverlet.collector" />
   </ItemGroup>
   <ItemGroup>
@@ -399,7 +401,7 @@ public void Enemy_Fires_BulletAtAimAngle()
 
 - Don't test BCL / third-party libraries.
 - Don't test `internal` helpers in isolation if they're covered through the public API.
-- Don't assert on implementation details (`Received(3)` on a mock) unless the contract specifies it.
+- Don't assert on implementation details (`Verify(..., Times.Exactly(3))` on a mock) unless the contract specifies it.
 - Don't use `Thread.Sleep` to wait for an event. Use `TaskCompletionSource`, polling with timeout, or `FakeTimeProvider`.
 - Don't share mutable state across tests at fixture / namespace scope.
 - Don't write tests that pass when run alone but fail in parallel. That's a fixture leak — fix the leak, don't paper over with `[NonParallelizable]`.

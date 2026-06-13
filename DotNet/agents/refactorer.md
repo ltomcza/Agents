@@ -1,7 +1,6 @@
 ---
 name: refactorer
 description: "Restructures existing C# / .NET code without changing its behavior — removes duplication, splits god methods, extracts services, simplifies conditionals, replaces hand-rolled loops with LINQ, modernizes to current C# features. Use when the code-reviewer flagged duplication or smells, when complexity has crept up, or when a planned change needs the ground prepared first. Behavior-preserving only — tests must pass before and after."
-tools: [read, edit, search, execute]
 model: sonnet
 ---
 

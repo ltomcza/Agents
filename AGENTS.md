@@ -7,10 +7,11 @@ automatically by Codex, Cursor, Copilot, Claude Code, and other compatible tools
 ## What this repo is
 
 A portable library of agent profiles and skills for software engineering,
-namespaced by language. The Python library lives under `Python/agents/` and
-`Python/skills/`; future languages get sibling directories at the repo root.
-There is no application code to run, build, or test — the deliverables are
-Markdown definitions consumed by other AI tools.
+namespaced by language. Libraries live under `<Language>/agents/` and
+`<Language>/skills/` — currently `Python/`, `DotNet/`, and `SQL/`; future languages
+get sibling directories at the repo root. There is no application code to run,
+build, or test — the deliverables are Markdown definitions consumed by other AI
+tools.
 
 ## Source of truth
 
@@ -40,9 +41,10 @@ pwsh ./scripts/sync-to-host.ps1
 
 - Filename is the kebab-case agent identifier with `.md` (e.g.,
   `architect.md`). The `name:` field in the frontmatter must match.
-- Frontmatter uses the portable superset documented in `README.md` — fields
-  recognized by both Claude Code and GitHub Copilot. Do not introduce host-specific
-  fields in canonical files; if needed, add them in the sync script.
+- Frontmatter uses the portable superset documented in `README.md`. The lowercase
+  `tools` aliases are Copilot-native; the sync script translates them into Claude
+  Code's tool names when it writes `.claude/agents/`. Do not introduce host-specific
+  fields in canonical files; if a host needs a transform, add it in the sync script.
 - The `description:` field is what an orchestrator reads to decide whether to
   invoke this agent. Write it as trigger conditions ("Use when …"), not a summary.
 - Model aliases only: `opus`, `sonnet`, `haiku`. Do not pin specific model IDs
@@ -83,10 +85,9 @@ When showing C# in code blocks, follow the standards in
   assume .NET 8+ / C# 12+ unless the example targets an older version.
 - XML doc comments on public API. `ILogger<T>` for logging.
 
-Current LTS as of writing is **.NET 10 (released November 2025)**; the
-`DotNet/skills/packaging/SKILL.md` examples and the `devops-engineer` agent
-target `net10.0` by default. Use `net8.0` only when the example specifically
-needs to target the older LTS.
+The examples in `DotNet/skills/packaging/SKILL.md` and the `devops-engineer` agent
+target **.NET 8 (LTS, released November 2023)** by default. Use a newer target only
+when the example specifically needs it.
 
 ## Tone
 
