@@ -1,7 +1,7 @@
 ---
 name: debugger
 description: "Investigates .NET / C# failures — exceptions, test failures, wrong outputs, performance regressions. Builds a minimal reproduction, narrows the root cause, and returns a precise diagnosis with the offending file and line. Use when something broke and you need to know why before fixing. Read-only — diagnoses, never edits."
-tools: [read, search, execute]
+tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 

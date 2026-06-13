@@ -1,7 +1,7 @@
 ---
 name: api-integrator
 description: "Integrates Python services with external HTTP APIs — typed clients, auth (API keys, OAuth, JWT), retries with backoff, pagination, rate-limit handling, webhook ingestion (signature verification), idempotency, and circuit breakers. Use when adding a new third-party API, hardening an existing client, or debugging flaky outbound traffic."
-tools: [read, edit, search, execute]
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

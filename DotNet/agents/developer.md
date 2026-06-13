@@ -1,6 +1,7 @@
 ---
 name: developer
 description: "Implements .NET / C# features from a design or contract. Writes idiomatic, nullable-aware, analyzer-clean code targeting .NET 8 / C# 12 at the time of writing. Use when there is a clear contract (from the architect or the user) and you need code written or modified."
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

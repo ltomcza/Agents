@@ -1,7 +1,7 @@
 ---
 name: tsql-debugger
 description: "Investigates T-SQL failures — query errors, wrong results, deadlocks, data anomalies, timeout exceptions, and transaction issues. Builds a minimal reproduction, narrows the root cause, and returns a precise diagnosis with the offending object and line. Use when something broke and you need to know why before fixing. Read-only — diagnoses, never edits."
-tools: [read, search, execute]
+tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 

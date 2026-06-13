@@ -1,7 +1,7 @@
 ---
 name: tsql-orchestrator
 description: "Coordinates the T-SQL development team across architect, developer, reviewer, security-auditor, debugger, performance-tuner, refactorer, docs-writer, migration-engineer, test-engineer, index-advisor, and etl-engineer specialists. Use this agent for any non-trivial SQL Server work — stored procedure development, multi-object refactors, performance investigations spanning several queries, or anything touching design + code + tests + review at once. Plans the workflow, delegates bounded tasks to specialists, integrates their output, and enforces the quality bar."
-tools: [read, search, agent]
+tools: Read, Grep, Glob, Task
 model: opus
 ---
 

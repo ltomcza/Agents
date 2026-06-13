@@ -1,7 +1,7 @@
 ---
 name: researcher
 description: "Researches existing Python codebases and external libraries before a change is made — maps reusable utilities, import graphs, naming conventions, module patterns, and similar implementations already in the project; evaluates PyPI packages for compatibility, maintenance health, licensing, and alternatives. Use before designing or implementing a feature that touches existing code, when choosing between third-party packages, when onboarding to an unfamiliar part of the codebase, or when the orchestrator needs an impact assessment before routing to architect or developer. Read-only — produces a research report, never edits code."
-tools: [read, search, web]
+tools: Read, Grep, Glob, WebSearch, WebFetch
 model: sonnet
 ---
 

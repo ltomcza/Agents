@@ -1,7 +1,7 @@
 ---
 name: tsql-migration-engineer
 description: "Handles database schema migrations — version-controlled DDL scripts, schema comparison, backward-compatible deployments, cross-version compatibility, rollback strategies, and database project scaffolding (SSDT, Flyway, DbUp, custom scripts). Use to set up a new database project, add a migration, debug deployment failures, or plan a safe schema change."
-tools: [read, edit, search, execute]
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

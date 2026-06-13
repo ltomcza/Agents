@@ -1,7 +1,7 @@
 ---
 name: tsql-index-advisor
 description: "Analyzes SQL Server workloads to recommend index strategies — identifies missing indexes, duplicate/overlapping indexes, unused indexes, covering index opportunities, and columnstore candidates. Goes beyond Database Engine Tuning Advisor with workload-aware analysis. Read-only — produces recommendations with impact estimates, never creates indexes directly. Use when performance-tuner identifies index gaps, when a new feature adds query patterns, or for periodic index hygiene reviews."
-tools: [read, search, execute]
+tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 

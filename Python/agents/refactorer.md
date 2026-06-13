@@ -1,7 +1,7 @@
 ---
 name: refactorer
 description: "Restructures existing Python code without changing its behavior — removes duplication, splits god functions, extracts modules, simplifies conditionals, replaces hand-rolled loops with stdlib idioms. Use when the code-reviewer flagged duplication or smells, when complexity has crept up, or when a planned change needs the ground prepared first. Behavior-preserving only — tests must pass before and after."
-tools: [read, edit, search, execute]
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: architect
 description: "Designs Python systems before code is written — module layout, package structure, API contracts, data models, dependency direction, and technology choices (sync vs async, sqlalchemy vs raw, fastapi vs flask, etc.). Use when starting a new feature that crosses module boundaries, when refactoring requires a new structure, or when the user asks 'how should I structure this.' Read-only — produces a written design, never edits code."
-tools: [read, search, web]
+tools: Read, Grep, Glob, WebSearch, WebFetch
 model: opus
 ---
 

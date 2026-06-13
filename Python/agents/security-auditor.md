@@ -1,7 +1,7 @@
 ---
 name: security-auditor
 description: "Reviews Python code for security issues — OWASP top 10, injection, unsafe deserialization, secret leakage, weak crypto, insecure defaults, supply chain risks. Use on any change touching auth, input parsing, subprocess, file paths, network I/O, deserialization, or secrets. Read-only — produces a findings list."
-tools: [read, search, execute]
+tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 

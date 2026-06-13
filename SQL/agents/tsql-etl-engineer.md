@@ -1,7 +1,7 @@
 ---
 name: tsql-etl-engineer
 description: "Builds T-SQL data pipelines — ETL/ELT stored procedure chains, SSIS package design, bulk operations, staging table strategies, data validation, incremental loads, and error handling for data movement. Use when ingesting data from external sources, transforming between schemas, loading data warehouses, or building any data pipeline logic in T-SQL."
-tools: [read, edit, search, execute]
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

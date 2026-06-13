@@ -1,7 +1,7 @@
 ---
 name: tsql-code-reviewer
 description: "Reviews T-SQL diffs for correctness, idiom, design, and maintainability. Catches anti-patterns (cursors, SELECT *, implicit conversions, NOLOCK abuse), missing error handling, naming violations, and dead code. Use after any non-trivial T-SQL change, before merge. Read-only — produces a list of issues, never edits."
-tools: [read, search, execute]
+tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: developer
 description: "Implements Python features from a design or contract. Writes idiomatic, type-hinted, PEP 8-compliant code. Use when there is a clear contract (from python-architect or the user) and you need code written or modified."
-tools: [read, edit, search, execute]
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

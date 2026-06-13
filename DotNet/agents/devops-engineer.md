@@ -1,6 +1,7 @@
 ---
 name: devops-engineer
 description: "Handles .NET project plumbing — .csproj, Directory.Build.props, Directory.Packages.props (Central Package Management), global.json, NuGet, EditorConfig, pre-commit / Husky.NET hooks, CI workflows (GitHub Actions, Azure DevOps), Dockerfile, packaging and releases. Use to set up a new project, add a dependency, debug CI, or harden the build."
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

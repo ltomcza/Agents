@@ -1,7 +1,7 @@
 ---
 name: tsql-security-auditor
 description: "Reviews T-SQL code for security issues — SQL injection, dynamic SQL risks, permission escalation, data exposure, audit gaps, encryption weaknesses, and OWASP database vulnerabilities. Use on any change touching dynamic SQL, user input handling, permission grants, sensitive data columns, or authentication/authorization logic. Read-only — produces a findings list."
-tools: [read, search, execute]
+tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 

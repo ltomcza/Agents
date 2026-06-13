@@ -1,7 +1,7 @@
 ---
 name: tsql-performance-tuner
 description: "Analyzes T-SQL query performance — execution plans, wait statistics, Query Store data, resource consumption, and parameter sniffing. Produces a baseline + ranked optimization recommendations with expected gains. Read-only — diagnoses, never edits. Use when queries are too slow, when CPU/IO is excessive, when blocking is reported, or when a performance baseline regresses."
-tools: [read, search, execute]
+tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 

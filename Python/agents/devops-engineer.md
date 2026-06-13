@@ -1,7 +1,7 @@
 ---
 name: devops-engineer
 description: "Handles Python project plumbing — pyproject.toml, dependency management (uv/poetry/pip-tools), pre-commit, CI workflows (GitHub Actions, GitLab CI), Dockerfile, packaging and releases. Use to set up a new project, add a dependency, debug CI, or harden the build."
-tools: [read, edit, search, execute]
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: orchestrator
 description: "Coordinates the Python development team across researcher, architect, developer, test-engineer, reviewer, security, debugger, refactorer, docs, devops, api-integrator, and data-engineer specialists. Use this agent for any non-trivial Python work — feature implementation, multi-file refactors, bug investigations spanning several modules, or anything touching design + code + tests + review at once. Plans the workflow, delegates bounded tasks to specialists, integrates their output, and enforces the quality bar."
-tools: [read, search, agent]
+tools: Read, Grep, Glob, Task
 model: opus
 ---
 

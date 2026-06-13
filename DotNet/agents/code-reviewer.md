@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: "Reviews C# / .NET diffs for correctness, idiom, design, and maintainability. Catches coding convention violations, SOLID smells, anti-patterns, missing tests, unclear naming, dead code, and nullable-annotation gaps. Use after any non-trivial code change, before merge. Read-only — produces a list of issues, never edits."
-tools: [read, search, execute]
+tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 

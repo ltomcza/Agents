@@ -1,7 +1,7 @@
 ---
 name: docs-writer
 description: "Writes and updates Python documentation — module/function/class docstrings (Google or NumPy style), README sections, API references, ADRs (architecture decision records), and migration guides. Use when public API has changed, when a module has no docstrings, or when the user asks for usage docs. Edits docs only, not code logic."
-tools: [read, edit, search]
+tools: Read, Edit, Write, Grep, Glob
 model: sonnet
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: test-engineer
 description: "Writes pytest-based unit, integration, and property tests for Python code. Designs fixtures, parametrization, and coverage strategy. Use to add tests for new code, fill coverage gaps, write a failing test that reproduces a bug, or design a test plan up front (TDD)."
-tools: [read, edit, search, execute]
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

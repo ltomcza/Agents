@@ -40,19 +40,20 @@ script auto-discovers it.
 │       │   └── SKILL.md
 │       └── ...
 ├── scripts/
-│   ├── sync-to-host.ps1     # mirror to .github/ and .claude/ on Windows
+│   ├── sync-to-host.ps1     # generate .claude/ (read by both hosts) on Windows
 │   └── sync-to-host.sh      # same, POSIX shells
 ├── AGENTS.md                # project conventions (read by any agent)
 └── README.md
 ```
 
 The files under `<Language>/agents/` and `<Language>/skills/` are the **single
-source of truth**. The `.github/` and `.claude/` directories are derived by the
-sync script — treat them as build artifacts and do not edit them directly. Both
-hosts expect a flat list, so the script copies the selected language's files into
-the destination under their bare names (no language prefix). Sync one language at a
-time (pass `-Languages` / `--lang`) so identically-named files from different
-languages don't collide in the shared host directory.
+source of truth**. The sync script generates one `.claude/` directory that **both**
+Claude Code and GitHub Copilot read — treat it as a gitignored build artifact and
+do not edit it directly. Both hosts expect a flat list, so the script copies the
+selected language's files into the destination under their bare names (no language
+prefix). Sync one language at a time (pass `-Languages` / `--lang`) so
+identically-named files from different languages don't collide in the shared host
+directory.
 
 ## Roster
 
@@ -161,9 +162,11 @@ pwsh ./scripts/sync-to-host.ps1
 ```
 
 The script auto-discovers every language directory at the repo root (anything
-containing `agents/` or `skills/`), aggregates them, and copies into both
-`.github/` (for GitHub Copilot) and `.claude/` (for Claude Code). Pass
-`-Languages Python` / `--lang Python` to restrict the sync to a subset.
+containing `agents/` or `skills/`), aggregates them, and writes a single `.claude/`
+directory that **both** GitHub Copilot and Claude Code read. Pass
+`-Languages Python` / `--lang Python` to restrict the sync to a subset. The
+generated directory is gitignored — re-run the script after pulling or editing a
+canonical file.
 
 ### Claude Code
 
@@ -173,10 +176,11 @@ demand based on their description.
 
 ### GitHub Copilot (VS Code / Cloud)
 
-After syncing, the agents are at `.github/agents/` and the skills at
-`.github/skills/`. They're available in Copilot Chat (`@agent-name`) and in the cloud
-agent runner. See
-[GitHub's custom agents docs](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-custom-agents).
+Copilot discovers custom agents under `.claude/agents/` and skills under
+`.claude/skills/` (the same files Claude Code uses), so no separate copy is needed.
+They're available in Copilot Chat (`@agent-name`) and in the cloud agent runner. See
+[GitHub's custom agents docs](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-custom-agents)
+and [agent skills docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills).
 
 ### Other hosts
 
@@ -184,10 +188,11 @@ Most modern coding agents now support the
 [Agent Skills open standard](https://agentskills.io). If your tool reads `SKILL.md`
 files from a known location, point it at the language-specific skills directory
 you care about (e.g. `Python/skills/`), or run the sync script and point at
-`.github/skills/` or `.claude/skills/`.
+`.claude/skills/`.
 
 For agent profiles, the in-frontmatter conventions match Copilot's and Claude Code's;
-extend `scripts/sync-to-host.*` to target additional hosts if needed.
+extend `scripts/sync-to-host.*` to target additional hosts (e.g. a `.github/` copy)
+if needed.
 
 ## Frontmatter convention
 
@@ -197,7 +202,7 @@ Every agent under `<Language>/agents/` uses this portable superset:
 ---
 name: <kebab-case identifier>
 description: "<when to use this agent — trigger conditions, not just a summary>"
-tools: [read, search, web]   # optional — omit to inherit the host's full toolset
+tools: Read, Grep, Glob, WebSearch, WebFetch   # required — explicit PascalCase list on every agent
 model: opus | sonnet | haiku
 ---
 ```
@@ -206,13 +211,16 @@ model: opus | sonnet | haiku
 - **`description`** — used by the orchestrator/host to decide when to invoke this
   agent. Write trigger conditions, not a marketing blurb. Be specific about what's
   in scope and what's out.
-- **`tools`** — optional. Lowercase aliases that GitHub Copilot understands
-  natively: `read`, `edit`, `write`, `search`, `execute`, `web`, `agent`, `todo`.
-  Claude Code does **not** recognize these aliases, so the sync script translates
-  them to Claude's tool names when it writes `.claude/agents/` (e.g.
-  `[read, search, web]` → `Read, Grep, Glob, WebSearch, WebFetch`). Declare `tools`
-  only on agents that need a restricted set (read-only reviewers, auditors, the
-  orchestrator); omit it on read/write agents so both hosts grant the full toolset.
+- **`tools`** — required; declared explicitly on **every** agent. Use the
+  PascalCase, comma-separated tool names that **both** hosts accept directly:
+  `Read`, `Edit`, `Write`, `Grep`, `Glob`, `Bash`, `WebSearch`, `WebFetch`, `Task`,
+  `TodoWrite`. Claude Code reads these natively, and GitHub Copilot recognizes each
+  as one of its documented tool aliases — so the source file is environment-agnostic
+  with no translation needed. Restricted agents (read-only reviewers, auditors, the
+  orchestrator) list only what they need; full-access read/write agents list their
+  complete toolset rather than omitting the field, so the granted set is explicit
+  and host-independent. PascalCase is the only canonical form — the sync script
+  copies agent files verbatim and does no frontmatter rewriting.
 - **`model`** — alias (`opus` / `sonnet` / `haiku`). Claude Code honors these;
   Copilot falls back to its model picker if the alias isn't one of its IDs. Avoid
   pinning exact model IDs unless you have a reason — aliases survive model upgrades.

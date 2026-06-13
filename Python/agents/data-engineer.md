@@ -1,7 +1,7 @@
 ---
 name: data-engineer
 description: "Builds Python data pipelines and analytics — pandas/polars, SQL schema design, ETL/ELT (Airflow/Prefect/Dagster), data validation (pandera/great-expectations), file formats (Parquet/Arrow), schema migrations (Alembic), and DataFrame memory efficiency. Use when ingesting, transforming, or analyzing data at any scale beyond a single CSV."
-tools: [read, edit, search, execute]
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

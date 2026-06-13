@@ -1,7 +1,7 @@
 ---
 name: tsql-developer
 description: "Implements T-SQL objects from a design or contract — stored procedures, functions, views, triggers, DDL, and DML. Writes idiomatic, well-structured, production-grade T-SQL. Use when there is a clear contract (from tsql-architect or the user) and you need SQL code written or modified."
-tools: [read, edit, search, execute]
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

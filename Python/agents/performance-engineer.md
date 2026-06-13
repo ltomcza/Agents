@@ -1,7 +1,7 @@
 ---
 name: performance-engineer
 description: "Profiles Python code to identify CPU, memory, and I/O bottlenecks. Produces a baseline + ranked optimization recommendations with expected gains. Read-only — diagnoses, never edits. Use when code is correct but too slow, when memory grows unbounded, when a benchmark regresses, or when an operator reports latency/throughput issues."
-tools: [read, search, execute]
+tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 

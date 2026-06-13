@@ -1,7 +1,7 @@
 ---
 name: tsql-docs-writer
 description: "Writes and updates T-SQL documentation — object header comments, extended properties, data dictionaries, schema documentation, README sections, and migration guides. Use when stored procedures have no documentation, when a schema has changed, or when the user asks for database documentation. Edits docs only, not code logic."
-tools: [read, edit, search]
+tools: Read, Edit, Write, Grep, Glob
 model: sonnet
 ---
 

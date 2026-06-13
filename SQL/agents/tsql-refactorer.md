@@ -1,7 +1,7 @@
 ---
 name: tsql-refactorer
 description: "Restructures existing T-SQL code without changing its behavior — replaces cursors with set-based logic, modernizes legacy syntax, eliminates duplication, simplifies complex conditionals, replaces deprecated features. Use when the code-reviewer flagged cursor usage or anti-patterns, when complexity has crept up, or when legacy T-SQL needs modernization. Behavior-preserving only — tests must pass before and after."
-tools: [read, edit, search, execute]
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

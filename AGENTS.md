@@ -17,10 +17,11 @@ tools.
 
 - `<Language>/agents/*.md` and `<Language>/skills/*/SKILL.md` are canonical.
   Edit these.
-- `.github/agents/`, `.github/skills/`, `.claude/agents/`, `.claude/skills/` are
-  derived by `scripts/sync-to-host.*`. Do not edit; do not commit changes to them
-  in isolation.
-- If you change a canonical file, re-run the sync script before committing.
+- `.claude/agents/` and `.claude/skills/` are derived by `scripts/sync-to-host.*`
+  and read by **both** Claude Code and GitHub Copilot. They are gitignored build
+  artifacts — do not edit them by hand; regenerate with the sync script.
+  (`.claude/settings.local.json` is not generated and is kept.)
+- If you change a canonical file, re-run the sync script to refresh `.claude/`.
 
 ## Setup
 
@@ -41,10 +42,15 @@ pwsh ./scripts/sync-to-host.ps1
 
 - Filename is the kebab-case agent identifier with `.md` (e.g.,
   `architect.md`). The `name:` field in the frontmatter must match.
-- Frontmatter uses the portable superset documented in `README.md`. The lowercase
-  `tools` aliases are Copilot-native; the sync script translates them into Claude
-  Code's tool names when it writes `.claude/agents/`. Do not introduce host-specific
-  fields in canonical files; if a host needs a transform, add it in the sync script.
+- Frontmatter uses the portable superset documented in `README.md`. Every agent
+  declares an explicit `tools` list using the PascalCase names that both Claude
+  Code and Copilot accept directly (`Read, Edit, Write, Grep, Glob, Bash,
+  WebSearch, WebFetch, Task, TodoWrite`) so the source file is environment-agnostic
+  with no translation needed — including full-access read/write agents, which list
+  their complete toolset rather than omitting the field. PascalCase is the only
+  canonical form; the sync script copies agent files verbatim and does no
+  frontmatter rewriting. Do not introduce host-specific fields in canonical files;
+  if a host needs a transform, add it in the sync script.
 - The `description:` field is what an orchestrator reads to decide whether to
   invoke this agent. Write it as trigger conditions ("Use when …"), not a summary.
 - Model aliases only: `opus`, `sonnet`, `haiku`. Do not pin specific model IDs
@@ -100,8 +106,8 @@ when the example specifically needs it.
 
 There is no automated test suite (yet). Manual validation:
 
-1. Run the sync script and confirm `.github/` and `.claude/` mirror the canonical
-   files.
+1. Run the sync script and confirm `.claude/agents/` and `.claude/skills/` mirror
+   the canonical files (one language at a time to avoid name collisions).
 2. Open one agent in your editor of choice (Claude Code or Copilot) and confirm
    it loads — descriptions render, model selection takes effect.
 3. For a substantive content change, run the agent on a small representative task
@@ -109,9 +115,9 @@ There is no automated test suite (yet). Manual validation:
 
 ## Commit hygiene
 
-- Edit canonical files (under `<Language>/agents/` and `<Language>/skills/`) and
-  the synced output in the same commit. CI will reject drift between them when
-  added.
+- Commit only canonical files (under `<Language>/agents/` and
+  `<Language>/skills/`). The `.claude/agents/` and `.claude/skills/` output is
+  gitignored — regenerate it locally with the sync script; don't commit it.
 - One agent or one skill per commit when practical. Cross-cutting frontmatter
   changes can be bundled.
 - Commit messages name the agent/skill with its language directory: `Python/data-engineer: clarify pandera lazy mode`.

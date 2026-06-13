@@ -1,7 +1,7 @@
 ---
 name: tsql-architect
 description: "Designs SQL Server databases before code is written — schema layout, normalization, table relationships, naming conventions, data types, indexing strategy, partitioning, and technology choices (clustered vs heap, rowstore vs columnstore, temporal vs CDC, etc.). Use when starting a new database, adding tables that cross schema boundaries, when refactoring requires a new structure, or when the user asks 'how should I model this.' Read-only — produces a written design, never edits code."
-tools: [read, search, web]
+tools: Read, Grep, Glob, WebSearch, WebFetch
 model: opus
 ---
 

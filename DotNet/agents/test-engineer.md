@@ -1,6 +1,7 @@
 ---
 name: test-engineer
 description: "Writes NUnit unit, integration, and property tests for .NET code. Designs fixtures, test-case data, and coverage strategy. Use to add tests for new code, fill coverage gaps, write a failing test that reproduces a bug, or design a test plan up front (TDD)."
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

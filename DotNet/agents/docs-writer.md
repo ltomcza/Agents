@@ -1,6 +1,7 @@
 ---
 name: docs-writer
 description: "Writes and updates .NET / C# documentation — XML doc comments (summary, param, returns, exception, remarks), README sections, API references, ADRs (architecture decision records), and migration guides. Use when public API has changed, when types have no XML docs, or when the user asks for usage docs. Edits docs only, not code logic."
+tools: Read, Edit, Write, Grep, Glob
 model: sonnet
 ---
 

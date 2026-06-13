@@ -1,7 +1,7 @@
 ---
 name: tsql-test-engineer
 description: "Writes tSQLt-based unit and integration tests for T-SQL code. Designs test classes, fake tables, spy procedures, and assertion strategies. Use to add tests for new stored procedures, fill coverage gaps, write a failing test that reproduces a bug, or design a test plan up front (TDD)."
-tools: [read, edit, search, execute]
+tools: Read, Edit, Write, Grep, Glob, Bash
 model: sonnet
 ---
 

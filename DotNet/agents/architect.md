@@ -1,7 +1,7 @@
 ---
 name: architect
 description: "Designs .NET / C# systems before code is written — solution layout, project boundaries, public API contracts, data models, dependency direction, and technology choices (Minimal API vs MVC, EF Core vs Dapper, MediatR vs direct services, BackgroundService vs Hangfire, .NET Aspire orchestration). Use when starting a new feature that crosses project boundaries, when refactoring requires a new structure, or when the user asks 'how should I structure this.' Read-only — produces a written design, never edits code."
-tools: [read, search, web]
+tools: Read, Grep, Glob, WebSearch, WebFetch
 model: opus
 ---
 

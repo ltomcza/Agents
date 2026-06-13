@@ -1,0 +1,9 @@
+# Generated host directories — regenerate with scripts/sync-to-host.*
+# (.claude/settings.local.json is intentionally NOT ignored.)
+.claude/agents/
+.claude/skills/
+.github/agents/
+.github/skills/
+
+# Junk
+bash.exe.stackdump

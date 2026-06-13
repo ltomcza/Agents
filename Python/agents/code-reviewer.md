@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: "Reviews Python diffs for correctness, idiom, design, and maintainability. Catches PEP 8 violations, SOLID smells, anti-patterns, missing tests, unclear naming, and dead code. Use after any non-trivial code change, before merge. Read-only — produces a list of issues, never edits."
-tools: [read, search, execute]
+tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 

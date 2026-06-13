@@ -1,7 +1,7 @@
 ---
 name: researcher
 description: "Researches existing .NET / C# codebases and external libraries before a change is made — maps reusable utilities, dependency graphs, naming conventions, project patterns, and similar implementations already in the solution; evaluates NuGet packages for compatibility, maintenance health, licensing, and alternatives. Use before designing or implementing a feature that touches existing code, when choosing between NuGet packages, when onboarding to an unfamiliar codebase area, or when the orchestrator needs an impact assessment before routing to architect or developer. Read-only — produces a research report, never edits code."
-tools: [read, search, web]
+tools: Read, Grep, Glob, WebSearch, WebFetch
 model: sonnet
 ---
 
