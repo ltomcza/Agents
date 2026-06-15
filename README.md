@@ -145,6 +145,35 @@ directory.
 | [`tsql-index-advisor`](SQL/agents/tsql-index-advisor.md) | Index recommendations from query and plan analysis | sonnet |
 | [`tsql-etl-engineer`](SQL/agents/tsql-etl-engineer.md) | ETL/ELT proc chains, SSIS, staging, incremental loads | sonnet |
 
+### Documentation Agents
+
+A team that produces RAG-ready Markdown documentation of existing .NET / C# services from
+their implementation plus supplied business information, capturing cross-service data flow
+(Solace topics/queues + HTTP).
+
+| Agent | Role | Model |
+|---|---|---|
+| [`documentation-orchestrator`](Documenter/agents/documentation-orchestrator.md) | Coordinates the documentation team per service + system-wide | opus |
+| [`service-analyzer`](Documenter/agents/service-analyzer.md) | Extracts a service's structure + internal architecture from C# — endpoints, DI, workers, config, entities, layering, pipeline, transactions, patterns (read-only) | sonnet |
+| [`integration-mapper`](Documenter/agents/integration-mapper.md) | Builds the data-flow graph — HTTP in/out + Solace publish/consume; feeds the container diagram (read-only) | sonnet |
+| [`business-context-writer`](Documenter/agents/business-context-writer.md) | Folds supplied business info into context/role/boundaries; maintains glossary | sonnet |
+| [`service-doc-writer`](Documenter/agents/service-doc-writer.md) | Assembles the per-service doc — frontmatter, C4-lite architecture diagrams + how-it-works, Mermaid + flow tables, agent recipes | sonnet |
+| [`system-cataloger`](Documenter/agents/system-cataloger.md) | Builds the catalog, message registry, HTTP matrix, system data-flow, glossary | sonnet |
+| [`doc-reviewer`](Documenter/agents/doc-reviewer.md) | QA vs schema, code accuracy, RAG-readiness, registry consistency (read-only) | sonnet |
+
+### Documentation Skills
+
+| Skill | Topic |
+|---|---|
+| [`service-doc-template`](Documenter/skills/service-doc-template/SKILL.md) | Per-service doc schema — frontmatter, ordered sections, mini-example |
+| [`system-catalog-template`](Documenter/skills/system-catalog-template/SKILL.md) | Aggregate docs — catalog, topic/queue registry, HTTP matrix, glossary, system graph |
+| [`dotnet-service-discovery`](Documenter/skills/dotnet-service-discovery/SKILL.md) | Extracting endpoints, DI, workers, config, entities, and internal architecture (layering, pipeline, transactions, patterns) from C# |
+| [`messaging-flow-analysis`](Documenter/skills/messaging-flow-analysis/SKILL.md) | Library-agnostic Solace publish/consume, topic/queue, delivery-semantics discovery |
+| [`http-flow-analysis`](Documenter/skills/http-flow-analysis/SKILL.md) | Inbound endpoints + outbound HTTP dependency resolution to callee services |
+| [`dataflow-diagrams`](Documenter/skills/dataflow-diagrams/SKILL.md) | Mermaid sequence/flowchart conventions paired with machine-readable flow tables |
+| [`architecture-diagrams`](Documenter/skills/architecture-diagrams/SKILL.md) | C4-lite container/component diagrams in Mermaid + the how-it-works narrative (pipeline, concurrency, transactions, patterns) |
+| [`rag-doc-optimization`](Documenter/skills/rag-doc-optimization/SKILL.md) | Frontmatter metadata, self-contained chunks, stable ids/anchors, cross-linking |
+
 ## Using these files in your editor
 
 The agents and skills are plain Markdown files with YAML frontmatter. Most agent
