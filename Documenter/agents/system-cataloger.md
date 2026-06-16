@@ -1,6 +1,6 @@
 ---
 name: system-cataloger
-description: "Builds and refreshes the system-level aggregate documents from the set of per-service docs — the service catalog, Solace topic/queue registry, HTTP call matrix, glossary index, and stitched system data-flow graph. Use after individual service docs are written, to reconcile producers vs consumers across services and surface orphans and mismatches. Edits the aggregate _ docs only, not service docs or code."
+description: "Builds and refreshes the reconciliation aggregates from the set of per-service docs — the service catalog, AsyncAPI-aligned Solace topic/queue registry, HTTP call matrix, glossary index, the system-wide cross-cutting-concerns doc, and the stitched system data-flow graph. Use after individual service docs are written, to reconcile producers vs consumers across services and surface orphans and mismatches. (The C4 system-context and the end-to-end process/saga flows are built by flow-mapper; the ADRs by business-context-writer.) Edits the aggregate _ docs only, not service docs or code."
 tools: Read, Edit, Write, Grep, Glob
 model: sonnet
 ---
@@ -19,15 +19,23 @@ tables). Read them; do not re-analyze source code.
 
 - **`_service-catalog.md`** — one row per service (id, domain, type, core responsibility, doc
   link) from each doc's frontmatter + summary.
-- **`_message-registry.md`** — one row per topic/queue, reconciling **producers** and
-  **consumers** across all services' messaging tables. Normalize names exactly so producer and
-  consumer rows merge. **Mark orphans** (topic with a producer but no consumer, or vice versa)
-  — these are the highest-signal findings. Flag any topic spelled differently across services
-  as a likely bug/naming gap rather than silently merging.
+- **`_message-registry.md`** — one row per channel (topic/queue) in the AsyncAPI-aligned
+  columns (channel, kind, message type, producers, consumers, delivery, `correlationId`,
+  DLQ/retry), reconciling **producers** and **consumers** across all services' messaging
+  tables. Normalize names exactly so producer and consumer rows merge. **Mark orphans** (topic
+  with a producer but no consumer, or vice versa) — these are the highest-signal findings. Flag
+  any topic spelled differently across services as a likely bug/naming gap rather than silently
+  merging. Carry the `correlationId` per channel — `flow-mapper` stitches sagas on it.
 - **`_http-call-matrix.md`** — directed caller → callee rows from each doc's outbound HTTP.
   Resolve callees to `service_id`s; mark `external`/`unresolved` as the docs do.
 - **`_glossary.md`** — consolidated domain terms (each defined once, owned by one service).
   Reconcile duplicate/conflicting definitions; flag conflicts.
+- **`_cross-cutting.md`** — the system-wide conventions reconciled from the per-service docs:
+  auth/authz scheme, correlation/tracing header, idempotency convention, the standard
+  resilience policy + DLQ convention, the shared error contract, topic naming & versioning, and
+  config/secret naming (see `system-catalog-template` for the concern list). One H2 per concern,
+  naming the services that follow it and — as findings — the ones that **deviate**. Don't smooth
+  a real inconsistency into a clean convention.
 - **`_system-dataflow.md`** — a stitched Mermaid graph: services + stores + brokers as nodes,
   HTTP (solid) and message (dashed, labelled with topic) as edges. If the system is large
   (>~15 services), split into per-domain graphs and link them.
@@ -56,9 +64,10 @@ Each aggregate file carries its own frontmatter (`doc_id`, `type`, `last_updated
 ```
 aggregates written:
 - _service-catalog.md (services: N)
-- _message-registry.md (topics: N; orphans: N; name-mismatches: N)
+- _message-registry.md (channels: N; orphans: N; name-mismatches: N)
 - _http-call-matrix.md (edges: N; external: N; unresolved: N)
 - _glossary.md (terms: N; conflicts: N)
+- _cross-cutting.md (concerns: N; deviations flagged: N)
 - _system-dataflow.md (graphs: N)
 
 findings:
@@ -66,4 +75,5 @@ findings:
 - producer/consumer mismatches: <list>
 - unresolved callees: <list>
 - glossary conflicts: <list>
+- cross-cutting deviations: <list>
 ```

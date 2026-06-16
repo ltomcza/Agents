@@ -1,6 +1,6 @@
 ---
 name: integration-mapper
-description: "Read-only. Builds the data-flow graph for a single .NET/C# service — inbound and outbound HTTP edges and publish/consume Solace topics & queues, with message types and delivery semantics. Resolves outbound calls and topics to concrete callee services where possible; flags what cannot be resolved statically. Use alongside service-analyzer before documenting a service. Library-agnostic for messaging; never edits code."
+description: "Read-only. Builds the data-flow graph for a single .NET/C# service — inbound and outbound HTTP edges and publish/consume Solace topics & queues, with message types, delivery semantics, correlation keys, and failure/compensation edges (DLQ, compensation events). Captures both the happy and the failure flow. Resolves outbound calls and topics to concrete callee services where possible; flags what cannot be resolved statically. Use alongside service-analyzer before documenting a service. Library-agnostic for messaging; never edits code."
 tools: Read, Grep, Glob
 model: sonnet
 ---
@@ -27,12 +27,17 @@ abstraction (interfaces/classes named `*Publisher/Producer/Consumer/Subscriber/H
 custom wrapper); then find call sites.
 
 - **Publishes** — for each publish site: topic/queue, message type, the trigger that leads
-  there, delivery semantics.
+  there, delivery semantics, the **`correlationId`** property, the **DLQ** destination, and
+  whether it is a **compensation/failure** publish (only fires on an error path).
 - **Consumes** — for each subscription/handler: topic/queue, message type handled, the effect
-  (DB write, downstream publish, HTTP call).
+  (DB write, downstream publish, HTTP call), the `correlationId` it carries, and the DLQ on
+  handler failure.
 - **Resolve topic names** from literals, constants, config keys (read `appsettings`), or
   attributes/conventions. Normalize exactly (keep version suffixes) so they merge with other
   services' rows. Anything you can't resolve statically goes in `unresolved` — do not guess.
+- **Capture the correlation key.** It is the property (`orderId`, `transactionId`) that ties a
+  publish to the business transaction — the join `flow-mapper` uses to stitch a saga across
+  services. `unknown` if not statically visible.
 
 When a custom Solace wrapper is supplied, follow the "adapt to the custom library" checklist
 in `messaging-flow-analysis` and note the wrapper's signatures in your output so the analysis
@@ -57,13 +62,13 @@ http_outbound:
 - {method, path, callee: <service_id|external|unresolved>, baseAddressSource, auth, resilience, purpose}
 
 publishes:
-- {topic, messageType, trigger, delivery}
+- {topic, messageType, trigger, delivery, correlationId, dlq, isCompensation}
 
 consumes:
-- {topic, messageType, effect, delivery}
+- {topic, messageType, effect, delivery, correlationId, dlq}
 
-flows:                       # ordered steps per scenario, for the flow table
-- {flow, step, actor, action, input, output, downstream}
+flows:                       # ordered steps per scenario, for the flow table (incl. failure rows)
+- {flow, step, actor, action, input, output, downstream, outcome}   # step "Nf" + outcome for failure/compensation
 
 unresolved:
 - {site, kind: topic|callee, reason, configKey?}

@@ -73,15 +73,21 @@ How to call it. Be precise enough that an agent can construct a valid request.
 For each important endpoint: request schema, response schema, status codes, error body
 shape, idempotency key behavior, and one concrete example request + response.
 
-**Messaging interface** — what it consumes and publishes:
+**Messaging interface** — what it consumes and publishes. Columns follow the AsyncAPI
+vocabulary (channel = topic/queue, operation = consume/publish, `correlationId` = the saga join
+key) so the table reconciles cleanly into `_message-registry.md`:
 
-| Direction | Topic / Queue | Message type | Delivery | Notes |
-|---|---|---|---|---|
-| consumes | `orders.placed.v1` | `OrderPlaced` | at-least-once | triggers a transfer |
-| publishes | `payments.completed.v1` | `PaymentCompleted` | guaranteed | correlation: `orderId` |
+| Direction | Channel (topic / queue) | Message type | Delivery | correlationId | DLQ / retry |
+|---|---|---|---|---|---|
+| consumes | `orders.placed.v1` | `OrderPlaced` | at-least-once | `orderId` | `orders.placed.dlq` |
+| publishes | `payments.completed.v1` | `PaymentCompleted` | guaranteed | `orderId` | — |
+| publishes | `payments.failed.v1` | `PaymentFailed` | guaranteed | `orderId` | — |
 
-Include the message schema (fields + types) for each published message — downstream
-consumers and agents need it.
+Include the **message schema** (fields + types) for each *published* message — this is the
+single home for that schema; `_message-registry.md` links here rather than repeating it.
+Record `correlationId` for every message (the property `_process-flows.md` stitches sagas on)
+and the `DLQ / retry` destination where discoverable — they are the failure side of the flow.
+A service that publishes a `*.failed.*`/compensation event must list it here.
 
 ### 6. Architecture & how it works
 The technical "how" — static structure plus internal behavior, at architecture-overview
@@ -106,6 +112,12 @@ diagram (for humans) **and** a flow table (for agents). See the `dataflow-diagra
 the exact format. Minimum: one flow table covering each inbound trigger. (Architecture, above,
 is the static structure; this is the per-trigger behavior.)
 
+Cover the **failure path**, not just the happy path: where an inbound trigger can fail (downstream
+error, validation reject, payment declined), add the failure/compensation rows (`2f, 3f…`) and
+the terminal outcome — what state the service is left in, whether it nacks/DLQs, and which
+compensation event it emits. These rows are what `_process-flows.md` stitches into the
+system-level saga. If a trigger genuinely has no failure branch, say so in one line.
+
 ### 8. Domain model
 Key entities / DTOs and where they persist (tables / collections). A compact list, not a
 full ERD. Name the entity, its purpose, and its store.
@@ -119,8 +131,11 @@ Significant settings / env vars / connection-string **names** (never secret valu
 flags, with defaults and whether required. Table: key, default, required, purpose.
 
 ### 11. Operational notes
-Health-check endpoint, key metrics/traces, retry/timeout/back-off, DLQ behavior. Keep it to
-what affects a caller's expectations (idempotency, eventual consistency windows).
+Health-check endpoint, key metrics/traces, retry/timeout/back-off, DLQ behavior, and any
+**compensation** the service performs or triggers on failure. Note the correlation/trace
+header it propagates (link the system-wide convention in `_cross-cutting.md` rather than
+restating it). Keep it to what affects a caller's expectations (idempotency, eventual
+consistency windows, what they observe when a downstream step fails).
 
 ### 12. Agent usage recipes
 Task-oriented recipes that make the doc directly actionable:
@@ -132,8 +147,10 @@ Task-oriented recipes that make the doc directly actionable:
 Cover the 2-5 most common things another service/agent would want to do.
 
 ### 13. Cross-references
-Links to related service docs (by `service_id`), the system catalog, and the glossary. Use
-the consistent link format from `rag-doc-optimization`.
+Links to related service docs (by `service_id`) and the system aggregates: the catalog, the
+glossary, the `_process-flows.md` processes this service participates in, the
+`_cross-cutting.md` conventions it follows, and any `_decisions.md` ADR that explains its
+shape. Use the consistent link format from `rag-doc-optimization`.
 
 ## Completed mini-example
 
@@ -220,6 +237,7 @@ success, `payments.completed.v1` is published with `orderId` as the correlation 
 
 ## Cross-references
 - [Orders API](orders-api.md) · [Service catalog](_service-catalog.md) · [Glossary](_glossary.md)
+- Processes: [Order-to-Cash](_process-flows.md#order-to-cash) · Conventions: [Cross-cutting](_cross-cutting.md) · Decisions: [ADR-003](_decisions.md)
 ```
 
 ## What makes a doc fail review
@@ -227,6 +245,8 @@ success, `payments.completed.v1` is published with `orderId` as the correlation 
 - Architecture section missing, or its component diagram boxes don't exist in the code
   (aspirational architecture instead of the real one).
 - Data-flow section with a diagram but no flow table (agents can't parse the diagram reliably).
+- Data-flow that documents only the happy path — no failure/compensation rows for a trigger
+  that can clearly fail.
 - Invents business context not supplied by the user.
 - Secret values pasted into configuration.
 - Cross-links to `service_id`s that don't exist.

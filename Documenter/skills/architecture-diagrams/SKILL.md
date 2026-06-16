@@ -13,9 +13,11 @@ Detailed internals rot fast; the structure and the pipeline are stable.
 
 ## Two diagrams: C4-lite Container and Component
 
-C4 has four levels (Context, Container, Component, Code). Use the middle two — they carry the
-most signal per unit of maintenance. Skip Context (the system catalog + `_system-dataflow.md`
-already cover it) and Code (too volatile).
+C4 has four levels (Context, Container, Component, Code). In a per-service doc, use the middle
+two — they carry the most signal per unit of maintenance. Skip Code (too volatile). The
+**Context** level (L1) is documented once for the whole system in `_system-context.md` (see
+`system-context-and-flows`), not per service — the service's Container diagram is the natural
+next zoom-in from there.
 
 ### Container diagram — the service in its surroundings
 

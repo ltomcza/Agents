@@ -149,7 +149,9 @@ directory.
 
 A team that produces RAG-ready Markdown documentation of existing .NET / C# services from
 their implementation plus supplied business information, capturing cross-service data flow
-(Solace topics/queues + HTTP).
+(Solace topics/queues + HTTP), the C4 system context, end-to-end process/saga flows
+(happy + compensation), system-wide cross-cutting concerns, and architecture decisions.
+See [Documenter/README.md](Documenter/README.md) for the workflow and the doc-set map.
 
 | Agent | Role | Model |
 |---|---|---|
@@ -157,22 +159,25 @@ their implementation plus supplied business information, capturing cross-service
 | [`service-analyzer`](Documenter/agents/service-analyzer.md) | Extracts a service's structure + internal architecture from C# — endpoints, DI, workers, config, entities, layering, pipeline, transactions, patterns (read-only) | sonnet |
 | [`integration-mapper`](Documenter/agents/integration-mapper.md) | Builds the data-flow graph — HTTP in/out + Solace publish/consume; feeds the container diagram (read-only) | sonnet |
 | [`business-context-writer`](Documenter/agents/business-context-writer.md) | Folds supplied business info into context/role/boundaries; maintains glossary | sonnet |
-| [`service-doc-writer`](Documenter/agents/service-doc-writer.md) | Assembles the per-service doc — frontmatter, C4-lite architecture diagrams + how-it-works, Mermaid + flow tables, agent recipes | sonnet |
-| [`system-cataloger`](Documenter/agents/system-cataloger.md) | Builds the catalog, message registry, HTTP matrix, system data-flow, glossary | sonnet |
-| [`doc-reviewer`](Documenter/agents/doc-reviewer.md) | QA vs schema, code accuracy, RAG-readiness, registry consistency (read-only) | sonnet |
+| [`service-doc-writer`](Documenter/agents/service-doc-writer.md) | Assembles the per-service doc — frontmatter, C4-lite architecture diagrams + how-it-works, Mermaid + flow tables (incl. failure/compensation), agent recipes | sonnet |
+| [`system-cataloger`](Documenter/agents/system-cataloger.md) | Builds the catalog, AsyncAPI-aligned message registry, HTTP matrix, cross-cutting concerns, system data-flow, glossary | sonnet |
+| [`flow-mapper`](Documenter/agents/flow-mapper.md) | Builds the C4 system-context and the end-to-end process/saga flows (happy + compensation), stitching per-service flows on the correlation key (read-only) | sonnet |
+| [`doc-reviewer`](Documenter/agents/doc-reviewer.md) | QA vs schema, code accuracy, RAG-readiness, registry + aggregate consistency (read-only) | sonnet |
 
 ### Documentation Skills
 
 | Skill | Topic |
 |---|---|
 | [`service-doc-template`](Documenter/skills/service-doc-template/SKILL.md) | Per-service doc schema — frontmatter, ordered sections, mini-example |
-| [`system-catalog-template`](Documenter/skills/system-catalog-template/SKILL.md) | Aggregate docs — catalog, topic/queue registry, HTTP matrix, glossary, system graph |
+| [`system-catalog-template`](Documenter/skills/system-catalog-template/SKILL.md) | Aggregate docs — catalog, AsyncAPI-aligned topic/queue registry, HTTP matrix, cross-cutting, decisions, glossary, system graph |
+| [`system-context-and-flows`](Documenter/skills/system-context-and-flows/SKILL.md) | C4 L1 system context + end-to-end cross-service process/saga flows (happy + compensation, stitched on the correlation key) |
 | [`dotnet-service-discovery`](Documenter/skills/dotnet-service-discovery/SKILL.md) | Extracting endpoints, DI, workers, config, entities, and internal architecture (layering, pipeline, transactions, patterns) from C# |
-| [`messaging-flow-analysis`](Documenter/skills/messaging-flow-analysis/SKILL.md) | Library-agnostic Solace publish/consume, topic/queue, delivery-semantics discovery |
+| [`messaging-flow-analysis`](Documenter/skills/messaging-flow-analysis/SKILL.md) | Library-agnostic Solace publish/consume, topic/queue, correlation keys, DLQ/compensation, delivery-semantics discovery |
 | [`http-flow-analysis`](Documenter/skills/http-flow-analysis/SKILL.md) | Inbound endpoints + outbound HTTP dependency resolution to callee services |
-| [`dataflow-diagrams`](Documenter/skills/dataflow-diagrams/SKILL.md) | Mermaid sequence/flowchart conventions paired with machine-readable flow tables |
+| [`dataflow-diagrams`](Documenter/skills/dataflow-diagrams/SKILL.md) | Mermaid sequence/flowchart conventions paired with machine-readable flow tables (incl. failure/compensation rows) |
 | [`architecture-diagrams`](Documenter/skills/architecture-diagrams/SKILL.md) | C4-lite container/component diagrams in Mermaid + the how-it-works narrative (pipeline, concurrency, transactions, patterns) |
-| [`rag-doc-optimization`](Documenter/skills/rag-doc-optimization/SKILL.md) | Frontmatter metadata, self-contained chunks, stable ids/anchors, cross-linking |
+| [`rag-doc-optimization`](Documenter/skills/rag-doc-optimization/SKILL.md) | Frontmatter metadata, controlled tag vocabulary, self-contained chunks, stable ids/anchors, cross-linking |
+| [`doc-maintenance`](Documenter/skills/doc-maintenance/SKILL.md) | Drift detection via source_commit, scoped incremental re-documentation, restamping |
 
 ## Using these files in your editor
 

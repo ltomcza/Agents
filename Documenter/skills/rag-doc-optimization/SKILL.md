@@ -17,7 +17,16 @@ schema in `service-doc-template`; aggregate docs use `system-catalog-template`. 
 
 Keep tag vocabulary consistent across docs (same spelling, same casing) — inconsistent tags
 fragment retrieval. Prefer a small controlled set: the domain, the integration tech, the
-capability.
+capability. Treat the vocabulary as **controlled**: reuse an existing tag/term before coining a
+new one (`http-api` not `rest`/`web-api`; `solace` not `messaging`/`pubsub`; one spelling per
+domain). The glossary (`_glossary.md`) is the controlled vocabulary for domain *terms*; the tag
+set is its counterpart for retrieval *facets*. A reviewer flags a tag that's a near-duplicate of
+an existing one.
+
+Aggregate docs use a stable `type` facet so retrieval can include or exclude them as a class —
+the controlled set is: `catalog`, `registry`, `matrix`, `context`, `process-flows`,
+`cross-cutting`, `decisions`, `glossary`, `dataflow`. Per-service docs use `type` =
+`http-api | worker | library | hybrid`.
 
 ## 2. Each section stands alone
 
@@ -53,8 +62,11 @@ graph is navigable from any chunk:
 ```
 ## Cross-references
 - [Orders API](orders-api.md) · [Service catalog](_service-catalog.md) · [Glossary](_glossary.md)
+- Processes: [Order-to-Cash](_process-flows.md#order-to-cash) · Conventions: [Cross-cutting](_cross-cutting.md) · Decisions: [_decisions.md](_decisions.md)
 ```
-A link to a `service_id` that has no doc is a dangling link — a reviewer flags it.
+A link to a `service_id` that has no doc, or to an aggregate (`_process-flows.md`,
+`_cross-cutting.md`, `_decisions.md`, `_system-context.md`) that wasn't produced, is a dangling
+link — a reviewer flags it.
 
 ## 6. Machine-readable beats prose for structured facts
 

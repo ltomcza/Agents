@@ -41,6 +41,10 @@ orchestrator hands you a whole solution, ask it to scope to one service.
    (`SaveChanges`/`TransactionScope`, outbox yes/no), concurrency primitives, error-handling
    mechanisms, and the load-bearing design patterns. Architecture-overview depth — layers and
    the main path, not every class.
+   Capture the **unhappy path** too: what the service does on failure (exception middleware /
+   `ProblemDetails`, message nack/redelivery/DLQ, any compensating action it performs or
+   compensation event it emits). The doc-writer turns this into the failure rows of the data
+   flow, so note it here even though integration-mapper owns the failure *edges*.
 
 ## What you do NOT do
 
@@ -78,7 +82,7 @@ internal_architecture:            # → service-doc-writer + architecture-diagra
   key_components: [ {name, layer, role} ]    # real types — component-diagram boxes
   transaction_boundaries: [ {where, atomicScope, outbox: yes|no} ]
   concurrency: [ {primitive, purpose} ]
-  error_handling: [ {mechanism, behavior} ]
+  error_handling: [ {mechanism, behavior, onFailure: nack|dlq|compensate|propagate, compensationEvent?} ]
   patterns: [ {pattern, exampleType} ]
 
 pointers (for integration-mapper):

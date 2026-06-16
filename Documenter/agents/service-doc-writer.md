@@ -31,7 +31,9 @@ One file, `<service_id>.md`, at the orchestrator-specified output location, with
    Domain model, Dependencies, Configuration, Operational notes, Agent usage recipes,
    Cross-references. Mark a genuinely N/A section in one line rather than deleting its heading.
 3. **Public interface** — HTTP endpoint table + per-endpoint detail with one concrete
-   example; messaging table (consumes/publishes) with message schemas.
+   example; messaging table (consumes/publishes) in the AsyncAPI-aligned columns
+   (channel, message type, delivery, `correlationId`, DLQ) with the full message schema for
+   each published message. List any `*.failed.*`/compensation event the service emits.
 4. **Architecture & how it works** — per `architecture-diagrams`: a C4-lite **Container**
    diagram (from the integration graph) and **Component** diagram (from the
    `internal_architecture` key components/layers — boxes must be real types), plus the
@@ -39,10 +41,14 @@ One file, `<service_id>.md`, at the orchestrator-specified output location, with
    error/retry handling, design patterns) at architecture-overview depth.
 5. **Data flow** — **both** a flow table (required, machine-readable) and a Mermaid diagram
    per important flow, kept in sync per `dataflow-diagrams`. Edge conventions: solid = HTTP,
-   dashed = message.
+   dashed = message. Include the **failure/compensation rows** (`Nf` + outcome column) for any
+   trigger that can fail, from the analyzer's error-handling and the mapper's compensation
+   edges — these are what `flow-mapper` stitches into the system saga.
 6. **Agent usage recipes** — 2-5 task-oriented recipes ("to do X, call/publish Y"), the part
    that makes the doc directly actionable by another agent.
-7. **Cross-references** — link related services by `service_id`, plus catalog and glossary.
+7. **Cross-references** — link related services by `service_id`, plus the catalog, glossary,
+   the `_process-flows.md` processes this service is in, the `_cross-cutting.md` conventions it
+   follows, and any `_decisions.md` ADR that explains its shape.
 
 ## RAG discipline (apply `rag-doc-optimization`)
 
@@ -58,8 +64,9 @@ Run the `rag-doc-optimization` pre-ingestion checklist:
 - valid frontmatter, id == filename; every template H2 present or marked N/A;
 - Architecture section has both C4-lite diagrams + the how-it-works narrative; component-diagram
   boxes are real types from the inventory (not aspirational);
-- data-flow has a flow table (not only a diagram); diagram edges match table rows;
-- no dangling cross-links; examples concrete; headings ≤ H3.
+- data-flow has a flow table (not only a diagram) including failure/compensation rows where the
+  trigger can fail; diagram edges match table rows;
+- no dangling cross-links (incl. to aggregates); examples concrete; headings ≤ H3.
 
 ## What you do NOT do
 
@@ -78,7 +85,7 @@ service: <service_id>
 file: <path written>
 sections: <N present> / 13  (N/A: <list>)
 architecture: container diagram <yes|no>, component diagram <yes|no>, how-it-works <yes|no>
-data-flow: flow table rows <N>, mermaid diagrams <N>
+data-flow: flow table rows <N> (failure/compensation rows <N>), mermaid diagrams <N>
 agent recipes: <N>
 carried gaps: <business-input markers: N; unresolved topics/callees: N; uncertain architecture: N>
 self-check: PASS | issues: <list>

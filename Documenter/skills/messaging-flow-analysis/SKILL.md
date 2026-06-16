@@ -4,8 +4,15 @@ description: "Library-agnostic discovery of asynchronous data flow in a .NET ser
 ---
 
 The goal is the async half of the data-flow graph: for each service, the list of topics/queues
-it **publishes** to and **consumes** from, with the message type and delivery semantics. This
-feeds the per-service messaging table and the system `_message-registry.md`.
+it **publishes** to and **consumes** from, with the message type, delivery semantics, the
+**correlation key**, and the **failure destinations** (DLQ / compensation events). This feeds
+the per-service messaging table and the system `_message-registry.md`.
+
+Frame the result in the **AsyncAPI** vocabulary so it reconciles cleanly across services: the
+topic/queue is a *channel*, publish/consume are *operations*, the message type carries a
+*schema*, `correlationId` is a message property, and the DLQ is a *binding*. You are not
+producing an AsyncAPI `.yaml` — you are capturing the same facts in a form the Markdown
+registry uses.
 
 Do **not** assume a specific Solace client API. Codebases wrap the broker behind their own
 abstractions, and a custom wrapper may be supplied later. Detect the project's *own* seams
@@ -73,8 +80,16 @@ Note what the code/config implies, when discoverable:
 - **Topic vs queue** — pub/sub fan-out vs point-to-point.
 - **Guaranteed/persistent vs direct/best-effort** — look for `Persistent`, `Guaranteed`,
   `DeliveryMode`, ack/settle calls, or wrapper options.
-- **Ordering** / partition / correlation key — often a header or a property on the message.
+- **Ordering** / partition / **correlationId** — the message header or property that ties this
+  message to the business transaction it belongs to (`orderId`, `transactionId`). Capture it
+  explicitly: it is the key the system-level `_process-flows.md` uses to stitch a saga across
+  services. If a publish and a downstream consume share a correlationId, they are provably the
+  same flow; if they share none, that link is unresolved.
 - **DLQ / retry** — dead-letter queue config, retry policies, `MoveToDeadLetter`, nack/redeliver.
+  Record the DLQ destination — it is the failure edge of the flow.
+- **Compensation / failure events** — note when a publish is a `*.failed.*` / compensation
+  message emitted on an error path (not the happy path); the flow table marks these as `f`
+  steps and the process view uses them as the compensating action.
 
 If a property isn't discoverable from static analysis, write `unknown` rather than guessing.
 
@@ -96,10 +111,13 @@ When the project's Solace wrapper library lands, do this once and the analysis s
 ## Output of this analysis
 
 ```
-publishes: [ {topic, messageType, trigger, delivery} ]
-consumes:  [ {topic, messageType, effect, delivery} ]
-unresolved: [ {site, reason} ]   # names that couldn't be resolved statically — flag, don't guess
+publishes: [ {topic, messageType, trigger, delivery, correlationId, dlq, isCompensation} ]
+consumes:  [ {topic, messageType, effect, delivery, correlationId, dlq} ]
+unresolved: [ {site, reason} ]   # names/correlation that couldn't be resolved statically — flag, don't guess
 ```
+
+`correlationId` and `dlq` are `unknown` when not statically visible; `isCompensation: true`
+marks a publish that only fires on a failure/compensation path.
 
 ## Cautions
 - A topic referenced only as a config key with no value in any `appsettings.*` is unresolved —
