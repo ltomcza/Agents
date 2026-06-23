@@ -54,7 +54,7 @@ def serve(filename):
 from pathlib import Path
 BASE = Path("./uploads").resolve()
 
-def serve(filename):
+def serve(filename: str) -> str:
     target = (BASE / filename).resolve()
     if not target.is_relative_to(BASE):  # Python 3.9+
         raise PermissionError("escape attempt")
@@ -193,13 +193,13 @@ Detect leaks with `gitleaks` in pre-commit + CI.
 
 ```python
 # Bad:
-async def proxy(url: str):
+async def proxy(url: str) -> httpx.Response:
     return await httpx.get(url)
 
 # Good:
 ALLOWED_HOSTS = {"api.example.com", "files.example.com"}
 
-async def proxy(url: str):
+async def proxy(url: str) -> httpx.Response:
     parsed = urlparse(url)
     if parsed.hostname not in ALLOWED_HOSTS:
         raise PermissionError("host not allowed")

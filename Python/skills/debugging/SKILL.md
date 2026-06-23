@@ -63,7 +63,7 @@ KeyError: 'id'
 ### `breakpoint()`
 
 ```python
-def process(x):
+def process(x: int) -> int:
     breakpoint()  # drops into pdb here
     return x + 1
 ```

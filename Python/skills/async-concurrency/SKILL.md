@@ -65,7 +65,7 @@ async def fetch_with_deadline(url: str) -> Response:
 
 1. A task is cancelled by sending it a `CancelledError`. **`CancelledError` is not an `Exception`** in 3.8+; it's a `BaseException`. Don't catch `Exception` thinking it includes cancellation — it doesn't.
 2. If you must catch it (cleanup), re-raise: `except CancelledError: cleanup(); raise`.
-3. To make a critical section uncancellable: `async with asyncio.shield(coro): ...`.
+3. To keep a specific awaitable running even if the caller is cancelled, wrap the await itself: `result = await asyncio.shield(coro)`.
 4. Cancellation propagates through `await`. If you're between `await`s in pure Python, you're not interruptible — keep work between awaits short.
 
 ```python
@@ -76,6 +76,15 @@ async def upload(payload: bytes) -> None:
         logger.warning("upload cancelled, undoing local state")
         await rollback()
         raise
+```
+
+```python
+# BAD — shield is not an async context manager
+async with asyncio.shield(commit()):  # type: ignore[attr-defined]
+    ...
+
+# GOOD — shield the awaited operation itself
+await asyncio.shield(commit())
 ```
 
 ## Synchronization primitives

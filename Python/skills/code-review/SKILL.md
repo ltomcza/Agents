@@ -5,6 +5,8 @@ description: Checklist for reviewing Python diffs — correctness, design, idiom
 
 Walk this checklist on every review. Skip categories that don't apply, but state that you skipped them.
 
+Use this skill when another agent needs an embedded review checklist. For a standalone read-only reviewer that returns severity-labeled findings, use the `code-reviewer` agent.
+
 ## 0. Does it do what it claims?
 
 Before any other check, read the change against the stated intent. Mismatched intent is the most expensive bug to catch later.

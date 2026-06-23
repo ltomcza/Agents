@@ -14,7 +14,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def transfer(account, amount):
+def transfer(account: Account, amount: Decimal) -> None:
     logger.info("transfer.start", extra={"account_id": account.id, "amount": str(amount)})
 ```
 
@@ -86,11 +86,11 @@ In a server, every log line should carry the request ID. Two patterns:
 
 ```python
 class RequestAdapter(logging.LoggerAdapter):
-    def process(self, msg, kwargs):
+    def process(self, msg: str, kwargs: dict[str, object]) -> tuple[str, dict[str, object]]:
         kwargs.setdefault("extra", {}).update(self.extra)
         return msg, kwargs
 
-def handle_request(req):
+def handle_request(req: Request) -> None:
     log = RequestAdapter(logger, {"request_id": req.id, "user_id": req.user_id})
     log.info("request.start")
     ...
@@ -105,7 +105,7 @@ import contextvars
 request_id_var: contextvars.ContextVar[str | None] = contextvars.ContextVar("request_id", default=None)
 
 class ContextFilter(logging.Filter):
-    def filter(self, record):
+    def filter(self, record: logging.LogRecord) -> bool:
         record.request_id = request_id_var.get()
         return True
 

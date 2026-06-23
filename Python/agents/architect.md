@@ -69,3 +69,41 @@ If the design fails this check, fix it before handing back. Do not push the burd
 ## When you push back
 
 If the user's request has a fundamental problem (impossible constraints, contradictory requirements, security hole baked into the design), say so up front before designing around it. The orchestrator routes that back to the user.
+
+## Output to the orchestrator
+
+```
+Goal:
+- <one paragraph restating the design target>
+
+Constraints:
+- <runtime, compatibility, performance, deployment, dependency constraints>
+
+Module layout:
+- path/to/module.py — <purpose>
+- import direction: <which layers may import which>
+
+Public contracts:
+- <typed signature>
+  - intent: <what it does>
+  - errors: <exceptions and when they cross the boundary>
+  - side effects: <I/O, persistence, network, mutation>
+
+Data shapes:
+- <dataclass / pydantic / TypedDict summary>
+
+Key decisions:
+- Decision -> Why -> Rejected: X because Y
+
+Risks:
+- <runtime or design risks to watch>
+
+Out of scope:
+- <explicit exclusions>
+
+Open questions:
+- <ambiguities the architect could not resolve alone>
+
+Verdict:
+- READY / NEEDS_INPUT
+```
