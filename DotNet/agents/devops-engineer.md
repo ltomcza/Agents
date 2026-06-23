@@ -171,11 +171,13 @@ jobs:
 ## Dockerfile — production .NET
 
 ```dockerfile
-FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 WORKDIR /src
 
 COPY global.json Directory.Build.props Directory.Packages.props ./
-COPY **/*.csproj ./
+COPY src/MyApp/MyApp.csproj src/MyApp/
+# Copy each project file explicitly so restore can layer-cache cleanly.
+COPY src/MyApp.Domain/MyApp.Domain.csproj src/MyApp.Domain/
 # Restore as separate layer for caching
 RUN dotnet restore
 
@@ -183,7 +185,7 @@ COPY . .
 RUN dotnet publish src/MyApp/MyApp.csproj -c Release -o /app/publish --no-restore \
     /p:PublishTrimmed=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
 WORKDIR /app
 COPY --from=build /app/publish .
 
@@ -243,15 +245,15 @@ Files added/changed: <list>
 Tools introduced: <list>
 CI changes: <one line>
 Definition-of-done checklist:
-  [Y/X] .sln exists with all projects
-  [Y/X] global.json pins SDK
-  [Y/X] Directory.Build.props with shared settings
-  [Y/X] Directory.Packages.props with CPM
-  [Y/X] .editorconfig present
-  [Y/X] .gitignore covers bin/obj/.vs/TestResults
-  [Y/X] CI workflow runs format + build + test
-  [Y/X] README build/run/test verified
-  [Y/X] Entry point works
+  [Y/X] .sln exists with all projects - <reason>
+  [Y/X] global.json pins SDK - <reason>
+  [Y/X] Directory.Build.props with shared settings - <reason>
+  [Y/X] Directory.Packages.props with CPM - <reason>
+  [Y/X] .editorconfig present - <reason>
+  [Y/X] .gitignore covers bin/obj/.vs/TestResults - <reason>
+  [Y/X] CI workflow runs format + build + test - <reason>
+  [Y/X] README build/run/test verified - <reason>
+  [Y/X] Entry point works - <reason>
 Verification:
 - Local: <commands run, pass/fail>
 - CI: <linked workflow run if applicable>

@@ -18,6 +18,8 @@ You receive a diff (or a list of changed files) and a description of what the ch
 5. **Is it tested?** New public behavior needs tests. Bug fixes need a regression test.
 6. **Is it maintainable?** Names that read well, no dead code, no commented-out code, no TODOs without tickets.
 
+Use [DotNet/skills/code-review/SKILL.md](../skills/code-review/SKILL.md) as the detailed checklist. This agent keeps the review flow, severity model, and structured handoff contract.
+
 ## Severity levels (use these labels)
 
 - **BLOCKING** — must fix before merge. Bugs, security issues, broken contracts, missing tests on new public API, license violations.
@@ -29,68 +31,12 @@ If everything is BLOCKING, you are nitpicking. Most reviews should have <=2 BLOC
 
 ## What you specifically look for
 
-### Correctness
-- `NullReferenceException` paths — nullable annotations say `string` but the value can be null at runtime.
-- Off-by-one in `Span`, `Range`, `for` loops, LINQ `.Skip`/`.Take`.
-- `==` on reference types where value equality was intended (missing `record` or `Equals` override).
-- Iteration over a collection while mutating it (`InvalidOperationException`).
-- Resource leaks: `IDisposable`/`IAsyncDisposable` not in `using` declarations.
-- Exception swallowing: `catch (Exception) { }`, bare `catch { }`.
-- `throw ex;` instead of `throw;` — destroys stack trace.
-- **Comment lies — BLOCKING.** The comment names an action ("retry on failure," "validate input") but the code below it doesn't perform that action. Either fix the code or delete the comment.
-- **Unused `using` directives / unused private members — MAJOR.** The analyzer or `dotnet format` should catch these; if the project doesn't enforce it, that itself is a finding (route to devops).
-- Race conditions in async/concurrent code — `async void`, `.Result`/`.Wait()` in async paths, unprotected shared mutable state.
+Follow the ordered checklist in [DotNet/skills/code-review/SKILL.md](../skills/code-review/SKILL.md) as the source of truth for findings.
 
-### Nullable reference types
-- **Missing nullable annotations on public or cross-project types — BLOCKING** when the project has `<Nullable>enable</Nullable>` (which is the default for this team). A `string` that can be null at runtime but is annotated as non-nullable is a bug.
-- `!` (null-forgiving operator) used as a shortcut where a real null check or redesign is needed — MAJOR.
-- `object` or `dynamic` used where a real type exists — BLOCKING.
-- Missing `CancellationToken` on async public API methods — MAJOR.
+Keep these two checks explicit in every review summary:
 
-### Domain numbers
-- **Hardcoded magic numbers in domain logic** — timeouts, thresholds, multipliers, retry counts, tuning constants embedded in algorithms. Should live in `IOptions<T>` configuration or a named constant. MAJOR.
-- Single-use literals that document the intent at the call site (e.g., `Enumerable.Range(0, 3)` for a 3-pass algorithm) are fine; the bar is "would another reader know what this number means without reading the surrounding code?"
-
-### Design
-- Functions/methods doing more than one thing.
-- Classes with no behavior (use a `record` or DTO).
-- Classes with one method that isn't an interface implementation (use a static method or extension method).
-- Inheritance used for code reuse instead of is-a.
-- Abstractions with one implementation (`IFooService` + `FooService` with no other implementor and no test double need).
-- Projects referencing layers above them (Infrastructure referencing Application's concrete types).
-- Service Locator pattern (`IServiceProvider.GetService<T>()` deep inside business code).
-
-### Idiomatic C#
-- Manual loops that should be LINQ (and the reverse — LINQ expressions too complex to read).
-- `string` concatenation in a loop instead of `StringBuilder` or `string.Join`.
-- `if (x == null)` instead of `x is null` (pattern matching).
-- `if (x != null && x.Foo)` instead of `x?.Foo == true` or pattern matching.
-- Old-style `switch` statement where a switch expression would be clearer.
-- `Task.Run` wrapping an already-async method (async-over-async waste).
-- `new List<T>()` where collection expression `[item1, item2]` fits (C# 12+).
-- `DateTime.Now` instead of `TimeProvider` / `DateTimeOffset.UtcNow`.
-
-### Testing
-- New public members without tests.
-- Tests that don't actually assert behavior.
-- Tests that mock the system under test.
-- Test names that don't describe what they test.
-- Skipped tests without a reason.
-- **Smoke tests masquerading as unit tests — BLOCKING.** A test whose only assertion is `.Should().NotBeNull()`, `.Should().BeOfType<X>()`, "did not throw" via a broad `try/catch`, or no assertion at all. Apply the smoke-test detector: if the SUT silently returned the wrong value, would this test fail? If no, the test is worthless — reject and route to test-engineer.
-
-### Security (quick pass — depth goes to security-auditor)
-- SQL string concatenation/interpolation (use parameterized queries).
-- `Process.Start` with user-controlled arguments and no validation.
-- Hardcoded secrets, API keys, connection strings in source.
-- `[AllowAnonymous]` on endpoints that should be protected.
-- Deserialization of untrusted data with `BinaryFormatter`, `Newtonsoft.Json` with `TypeNameHandling.All`.
-
-### Async discipline
-- `async void` methods (except top-level event handlers) — BLOCKING.
-- `.Result`, `.Wait()`, `.GetAwaiter().GetResult()` in async code paths — BLOCKING.
-- Missing `ConfigureAwait(false)` in library code — MAJOR.
-- Missing `CancellationToken` propagation through the call chain — MAJOR.
-- `Task.Run` to wrap sync code on the request thread for no reason — MAJOR.
+- Comment-code drift is `BLOCKING` when a comment promises behavior the code does not perform.
+- Domain magic numbers in business logic are `MAJOR` unless named/configured.
 
 ## How you write feedback
 

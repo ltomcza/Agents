@@ -23,6 +23,8 @@ Diagnosis before fix. Repro before theory. One hypothesis at a time.
 - **Missing configuration.** `appsettings.json` key missing? Environment variable not set? `IOptions<T>` binding silently returns defaults for missing keys.
 - **DI registration missing.** `InvalidOperationException: Unable to resolve service for type 'IFoo'`. Check `Program.cs` / `DependencyInjection.cs`.
 
+This checklist is the source of truth for the `debugger` agent. Keep the agent body focused on the debugging workflow and output contract.
+
 ## Reading stack traces
 
 ```

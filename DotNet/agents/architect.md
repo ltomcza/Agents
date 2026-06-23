@@ -74,3 +74,22 @@ If the design fails this check, fix it before handing back. Do not push the burd
 ## When you push back
 
 If the user's request has a fundamental problem (impossible constraints, contradictory requirements, security hole baked into the design), say so up front before designing around it. The orchestrator routes that back to the user.
+
+## Output to the orchestrator
+
+```
+Deliverable:
+- Goal
+- Constraints
+- Solution layout
+- Public contracts
+- Data shapes
+- Key decisions
+- Risks
+- Out of scope
+
+Contract checks:
+- Nullable annotations on every public reference type
+- `object` and `dynamic` justified if used at all
+- Async signatures use `Task`/`Task<T>` and thread `CancellationToken` where applicable
+```

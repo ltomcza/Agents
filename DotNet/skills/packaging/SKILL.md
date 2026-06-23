@@ -168,16 +168,18 @@ Cache NuGet packages. Pin SDK via `global.json`. Run format, build, and test.
 ## Docker — production image
 
 ```dockerfile
-FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 WORKDIR /src
 COPY global.json Directory.Build.props Directory.Packages.props ./
-COPY **/*.csproj ./
+# Copy each project file explicitly so restore can layer-cache cleanly.
+COPY src/MyApp/MyApp.csproj src/MyApp/
+COPY src/MyApp.Domain/MyApp.Domain.csproj src/MyApp.Domain/
 RUN dotnet restore
 
 COPY . .
 RUN dotnet publish src/MyApp/MyApp.csproj -c Release -o /app/publish --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
 WORKDIR /app
 COPY --from=build /app/publish .
 RUN adduser -D -u 1000 appuser

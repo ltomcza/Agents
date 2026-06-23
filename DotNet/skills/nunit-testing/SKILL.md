@@ -5,6 +5,8 @@ description: NUnit testing patterns for .NET — test structure, fixtures, test-
 
 Use **NUnit 4.x** as the testing framework. Standard packages: `NUnit`, `NUnit3TestAdapter`, `NUnit.Analyzers`, `Microsoft.NET.Test.Sdk`, `coverlet.collector`, `FluentAssertions`, `Moq`, `FsCheck.NUnit`.
 
+This checklist is the source of truth for the `test-engineer` agent. Keep the agent body focused on test-planning flow, coverage goals, and the output contract.
+
 ## Assertion library
 
 | | FluentAssertions | NUnit native (`Assert.That` constraint model) |

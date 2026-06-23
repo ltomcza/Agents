@@ -9,6 +9,8 @@ Walk this checklist on every review. Skip categories that don't apply, but state
 
 Before any other check, read the change against the stated intent. Mismatched intent is the most expensive bug to catch later.
 
+This checklist is the source of truth for the `code-reviewer` agent. Keep the agent body focused on review flow, severity model, and output contract.
+
 ## 1. Correctness
 
 - [ ] `NullReferenceException` paths — nullable annotations say `string` but runtime can be null?

@@ -210,11 +210,20 @@ demand based on their description.
 
 ### GitHub Copilot (VS Code / Cloud)
 
-Copilot discovers custom agents under `.claude/agents/` and skills under
-`.claude/skills/` (the same files Claude Code uses), so no separate copy is needed.
-They're available in Copilot Chat (`@agent-name`) and in the cloud agent runner. See
-[GitHub's custom agents docs](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-custom-agents)
-and [agent skills docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills).
+VS Code's Copilot discovers custom agents under `.claude/agents/` (following the
+Claude sub-agents format) and skills under `.claude/skills/` — the same files Claude
+Code uses, so no separate copy is needed. Once synced, pick an agent from the **Agents
+dropdown** in the Chat view (or `/agents`); skills load on demand by description. The
+same definitions are also used by the cloud agent runner. See the
+[VS Code custom agents docs](https://code.visualstudio.com/docs/agent-customization/custom-agents),
+the [VS Code agent skills docs](https://code.visualstudio.com/docs/agent-customization/agent-skills),
+and [GitHub's cloud custom agents docs](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-custom-agents).
+
+Note: `.claude/` is the gitignored output of the sync script — run it first, or point
+VS Code at the canonical dirs via the `chat.agentFilesLocations` setting. Copilot reads
+the agent definition as a single prompt; it does not run the `orchestrator`'s `Task`-based
+delegation (that is a Claude Code mechanism), so in Copilot the orchestrator acts as a
+planning prompt rather than auto-dispatching to specialists.
 
 ### Other hosts
 
@@ -245,19 +254,24 @@ model: opus | sonnet | haiku
 - **`description`** — used by the orchestrator/host to decide when to invoke this
   agent. Write trigger conditions, not a marketing blurb. Be specific about what's
   in scope and what's out.
-- **`tools`** — required; declared explicitly on **every** agent. Use the
-  PascalCase, comma-separated tool names that **both** hosts accept directly:
-  `Read`, `Edit`, `Write`, `Grep`, `Glob`, `Bash`, `WebSearch`, `WebFetch`, `Task`,
-  `TodoWrite`. Claude Code reads these natively, and GitHub Copilot recognizes each
-  as one of its documented tool aliases — so the source file is environment-agnostic
-  with no translation needed. Restricted agents (read-only reviewers, auditors, the
-  orchestrator) list only what they need; full-access read/write agents list their
-  complete toolset rather than omitting the field, so the granted set is explicit
-  and host-independent. PascalCase is the only canonical form — the sync script
-  copies agent files verbatim and does no frontmatter rewriting.
-- **`model`** — alias (`opus` / `sonnet` / `haiku`). Claude Code honors these;
-  Copilot falls back to its model picker if the alias isn't one of its IDs. Avoid
-  pinning exact model IDs unless you have a reason — aliases survive model upgrades.
+- **`tools`** — required; declared explicitly on **every** agent as a PascalCase,
+  comma-separated list: `Read`, `Edit`, `Write`, `Grep`, `Glob`, `Bash`, `WebSearch`,
+  `WebFetch`, `Task`, `TodoWrite`. Claude Code reads these natively. VS Code's Copilot
+  parses the same comma-separated Claude format and maps the core file/shell tools
+  (`Read`, `Edit`, `Write`, `Grep`, `Glob`, `Bash`); the Claude-specific names
+  (`WebSearch`, `WebFetch`, `Task`, `TodoWrite`) have no documented Copilot equivalent
+  and are **silently ignored** — per VS Code, "if a given tool is not available when
+  using the custom agent, it is ignored." So the same source file loads in both hosts
+  without translation, but the granted toolset is not 1:1: in Copilot an agent simply
+  doesn't gain a capability it named but the host doesn't recognize (never an error).
+  Restricted agents (read-only reviewers, auditors, the orchestrator) list only what
+  they need; full-access read/write agents list their complete toolset rather than
+  omitting the field, so the granted set is explicit. PascalCase is the only canonical
+  form — the sync script copies agent files verbatim and does no frontmatter rewriting.
+- **`model`** — alias (`opus` / `sonnet` / `haiku`). Claude Code honors these. VS Code's
+  Copilot expects full model names (e.g. `Claude Opus 4.5`), so it ignores these aliases
+  and uses the user-selected model. Avoid pinning exact model IDs unless you have a
+  reason — aliases survive model upgrades.
 
 Every skill in `<Language>/skills/<name>/SKILL.md` uses the AgentSkills.io standard:
 

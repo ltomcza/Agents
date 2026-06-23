@@ -20,11 +20,13 @@
 # prefix), so sync one language at a time — pass --lang to scope the run — to
 # avoid cross-language filename collisions in the shared destination.
 #
-# Agents declare tools in the PascalCase form that both hosts read natively
-# (Read, Edit, Write, Grep, Glob, Bash, WebSearch, WebFetch, Task, TodoWrite) —
-# Claude Code reads these directly and GitHub Copilot recognizes them as its
-# documented tool aliases. Agent and skill files are copied verbatim; no
-# frontmatter rewriting is performed.
+# Agents declare tools in the PascalCase form
+# (Read, Edit, Write, Grep, Glob, Bash, WebSearch, WebFetch, Task, TodoWrite).
+# Claude Code reads all of these directly; GitHub Copilot parses the same Claude
+# format and maps the core file/shell tools (Read, Edit, Write, Grep, Glob, Bash),
+# silently ignoring Claude-specific names it has no equivalent for (WebSearch,
+# WebFetch, Task, TodoWrite) — an unavailable tool is dropped, never an error.
+# Agent and skill files are copied verbatim; no frontmatter rewriting is performed.
 #
 # Usage:
 #   ./scripts/sync-to-host.sh                 # sync all languages

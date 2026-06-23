@@ -43,14 +43,17 @@ pwsh ./scripts/sync-to-host.ps1
 - Filename is the kebab-case agent identifier with `.md` (e.g.,
   `architect.md`). The `name:` field in the frontmatter must match.
 - Frontmatter uses the portable superset documented in `README.md`. Every agent
-  declares an explicit `tools` list using the PascalCase names that both Claude
-  Code and Copilot accept directly (`Read, Edit, Write, Grep, Glob, Bash,
-  WebSearch, WebFetch, Task, TodoWrite`) so the source file is environment-agnostic
-  with no translation needed — including full-access read/write agents, which list
-  their complete toolset rather than omitting the field. PascalCase is the only
-  canonical form; the sync script copies agent files verbatim and does no
-  frontmatter rewriting. Do not introduce host-specific fields in canonical files;
-  if a host needs a transform, add it in the sync script.
+  declares an explicit `tools` list using the PascalCase names (`Read, Edit, Write,
+  Grep, Glob, Bash, WebSearch, WebFetch, Task, TodoWrite`) so the source file is
+  environment-agnostic with no translation needed — including full-access read/write
+  agents, which list their complete toolset rather than omitting the field. Claude
+  Code reads all of these natively; VS Code's Copilot parses the same Claude format
+  and recognizes the core file/shell tools (`Read, Edit, Write, Grep, Glob, Bash`),
+  while Claude-specific names (`WebSearch, WebFetch, Task, TodoWrite`) are silently
+  ignored if the host has no equivalent — an unavailable tool is dropped, never an
+  error. PascalCase is the only canonical form; the sync script copies agent files
+  verbatim and does no frontmatter rewriting. Do not introduce host-specific fields
+  in canonical files; if a host needs a transform, add it in the sync script.
 - The `description:` field is what an orchestrator reads to decide whether to
   invoke this agent. Write it as trigger conditions ("Use when …"), not a summary.
 - Model aliases only: `opus`, `sonnet`, `haiku`. Do not pin specific model IDs

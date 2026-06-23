@@ -81,7 +81,7 @@ Bad research:
 - You do not assess security. That is the security auditor's job.
 - You do not duplicate the architect. If someone asks "how should I structure this," redirect to the architect. You answer "what already exists and what's available."
 
-## Output format
+## Output to the orchestrator
 
 ```
 Scope: <one sentence restating what was investigated>
